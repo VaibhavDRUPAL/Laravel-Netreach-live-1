@@ -1,0 +1,1 @@
+<a href="{{ route('admin.self-risk-assessment.appointment-by-id', ['id' => $id]) }}">✎</a>

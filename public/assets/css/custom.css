@@ -1,0 +1,175 @@
+/* Custom css */
+.mx-w-440{
+    max-width: 340px;
+}
+#landing-page-pointers li{
+    padding: 0px;
+    margin-left: -40px;
+    text-decoration: none;
+    list-style: none;
+}
+
+#landing-page-pointers .fa-solid{
+    margin-right: 10px;
+}
+/* button start */
+#landing-page-button{
+    display: flex;
+    justify-content: start;
+    align-items: center; 
+    margin-left: -25px;
+    position: relative !important;
+}
+
+.meetbtn{
+    color: white;
+    /* background-color: #438DED   !important; */
+    background-color: #1475A1 !important;
+    font-size: 1em !important;
+    padding: 10px 20px 10px 20px;
+    border: none;
+    margin-bottom: 0.5em;
+    border-radius: 15px !important;
+}
+
+/* #landing-page-button .right_btn, .left_btn{
+    background-color: #1476A1 !important;
+    width: 350px;
+    padding: 10px 25px;
+    border-radius: 10px;
+    margin-left: 10px;
+    text-align: center;
+} */
+
+@media screen and (min-width: 768px) {
+    #landing-page-button .check_box {
+        position: absolute !important;
+        bottom: -50px;
+        left: 25px;
+    }
+}
+
+/* button end */
+
+
+
+/* text_area start */
+ #landing-page-pointers .text_area{
+    margin-top: 75px;
+    width: fit-content;
+    padding: 10px;
+    /* border: 1.7px solid rgb(232, 140, 155); */
+}
+
+#landing-page-button .title_h4{  
+    font-weight: 700;
+    padding-left: -20px;
+}
+
+
+/* text_area end */
+
+@media (max-width: 1024px){
+    #landing-page-button{
+        display: flex;
+        flex-direction: column;
+        justify-content: start;
+        align-items: center; 
+        margin-left: -25px;
+        position: relative !important;
+    }
+
+    #landing-page-button .right_btn,.left_btn{
+        width: 280px;
+        padding: 10px 25px;
+        border-radius: 30px;
+        margin-left: 10px;
+        text-align: center;
+    }
+
+    #landing-page-button, .left_btn{
+        margin-bottom: 5px;
+    }
+    #landing-page-button .checkbox_text {
+        color: #000 !important;
+    }
+}
+
+@media (max-width: 768px) {
+    #landing-page-button .checkbox_text {
+        color: #000 !important;
+        margin-left: -10px;
+    }
+}
+
+@media (max-width: 768px) and (max-width: 426px) {
+    
+    #landing-page-button .check_box {
+        position: absolute !important;
+        left: 30px;
+        margin-top: -10px;
+
+    }
+
+    .landing_page_btn {
+        display: flex;
+        flex-direction: column; /* Change to column layout */
+        align-items: center;
+        justify-content: center; /* Align items to the start */
+    }
+
+    #landing-page-button .left_btn, #landing-page-button .right_btn {
+        width: 180px;
+        margin: 10px 0; /* Adjust margin for spacing between buttons */
+        padding: 5px 15px;
+         font-size: small !important;
+
+    }
+    #landing-page-button .right_btn{
+        margin-top: 40px !important;
+    }
+ 
+
+    #landing-page-button .check_box{
+        top: 55px;
+    }
+    #landing-page-pointers .text_area{
+        margin-top: 30px;
+    }
+    #landing-page-button a{
+        letter-spacing: 0.9px !important;
+
+    }
+    #landing-page-button .checkbox_text {
+        color: #000 !important;
+        margin-top: 0px !important;
+    }
+    /* label{
+        font-size: small !important;
+    } */
+   
+}
+
+
+
+
+@media (max-width: 320px){
+    #landing-page-button .check_box{
+        margin-top: 1px;
+        top: 65px !important;
+        left: 40px !important;
+    }
+
+    #landing-page-button .left_btn{
+        font-size: medium !important;
+        margin-top: 20px !important;
+    }
+    #landing-page-button label{
+        font-size: x-small !important;
+    }
+
+   
+
+}
+
+

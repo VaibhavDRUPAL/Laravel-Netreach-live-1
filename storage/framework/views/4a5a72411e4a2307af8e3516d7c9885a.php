@@ -1,0 +1,1 @@
+<span class="text-primary font-weight-bold">Direct Link</span><?php /**PATH /var/www/netreach2/resources/views/self/admin/ajax/direct.blade.php ENDPATH**/ ?>

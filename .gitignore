@@ -1,0 +1,64 @@
+# Directories
+/node_modules
+/public/hot
+/public/mix-manifest.json
+/public/storage
+/storage/*.key
+/vendor
+/ssl
+/stubs
+
+# Config
+.env
+.env.example
+.env.backup
+.phpunit.result.cache
+.htaccess
+.editorconfig
+
+# Media Extentions
+**.sql
+**.com
+**.zip
+**.png
+**.jpg
+**.jpeg
+**.pdf
+**.xlsx
+**.csv
+**.ftpquota
+**.conf
+**.log
+**.ini
+**.pem
+**.rnd
+**.txt
+**.json
+**.swp
+**.DS_Store
+
+# IDEs and editors
+.idea/
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
+
+# Visual Studio Code
+.vscode/*
+.history/*
+
+# Exclude
+!composer.json
+!package.json
+!/public/assets/**
+
+# Other
+Homestead.yaml
+composer.lock
+error_log
+
+# File
+app/Http/Controllers/TestController.php

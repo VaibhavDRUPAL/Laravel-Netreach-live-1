@@ -1,0 +1,1 @@
+<?php /**PATH /var/www/netreach2/resources/views/includes/chatbot.blade.php ENDPATH**/ ?>
