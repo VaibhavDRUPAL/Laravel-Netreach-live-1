@@ -27,7 +27,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user/profile', [UserApiController::class, 'getUserDetails']);
     Route::post('/user/update', [UserApiController::class, 'updateUser']);
 });
-// Route::get('/user/fetch', [UserApiController::class, 'getUserDetails']);
+//   Route::get('/user/fetch', [UserApiController::class, 'getUserDetails']);
 
 Route::post('/user/questionnaire', [UserApiController::class, 'questionnaire']);
 Route::post('/user/book-appointment', [UserApiController::class, 'book_appointment']);
