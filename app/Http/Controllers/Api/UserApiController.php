@@ -16,6 +16,8 @@ use App\Models\BookAppinmentMaster;
 use App\Models\StateMaster;
 use App\Models\DistrictMaster;
 use App\Models\Availability;
+use App\Models\SelfModule\RiskAssessmentQuestionnaire;
+use App\Models\BookTeleconsultation;
 //    use Illuminate\Support\Facades\Validator;
 
 class UserApiController extends Controller
@@ -39,22 +41,22 @@ class UserApiController extends Controller
 
 
     public function getUserDetails(Request $request)
-{
-    $user = $request->user(); // or auth()->user()
+    {
+        $user = $request->user(); // or auth()->user()
 
-    if (!$user) {
+        if (!$user) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Unauthenticated'
+            ], 401);
+        }
+
         return response()->json([
-            'status' => false,
-            'message' => 'Unauthenticated'
-        ], 401);
+            'status' => true,
+            'message' => 'User details fetched successfully',
+            'user' => $user,
+        ]);
     }
-
-    return response()->json([
-        'status' => true,
-        'message' => 'User details fetched successfully',
-        'user' => $user,
-    ]);
-}
 
 
     public function sendOTP(Request $request)
@@ -92,10 +94,11 @@ class UserApiController extends Controller
         ]);
 
         $mobileNo = $request->mobile_number;
+
         $otpData = OTPMaster::where('phone_no', $mobileNo)
             ->where('otp', $request->otp)
             ->first();
-
+        // dd($otpData);
         if (!$otpData) {
             return response()->json([
                 'status' => false,
@@ -187,13 +190,10 @@ class UserApiController extends Controller
         $appointment = BookAppinmentMaster::create([
             'user_id' => $user_id,
             'state_id' => $request->state,
-            // Assuming 'service' corresponds to 'survey_id'
             'survey_id' => $request->service,
             'district_id' => $request->district,
-            // Assuming 'testing_center' corresponds to 'center_ids'
             'center_ids' => $request->testing_center,
             'appoint_date' => $request->appointment_date,
-            // You may need to fill other fields like 'serach_by' and 'pincode' if available in the request
         ]);
 
         // Generate the unique ID and update the booking record
@@ -560,53 +560,222 @@ class UserApiController extends Controller
    
 
 
-        public function create_time_slot(Request $request)
+        
+
+    public function create_time_slot(Request $request)
+    {
+        $request->validate([
+            'days' => 'required|array|min:1|max:7',
+            'days.*.date' => 'required|date|after_or_equal:today',
+            'days.*.time_slots' => 'required|array|min:1',
+            'days.*.time_slots.*.start_time' => 'required|date_format:H:i',
+            'days.*.time_slots.*.end_time'   => 'required|date_format:H:i|after:days.*.time_slots.*.start_time',
+        ]);
+
+        $userId = auth()->id() ?? 1; // fallback for testing
+        $errors = [];
+        $created = [];
+
+        // ✅ Step 1: Merge slots for the same date
+        $mergedDays = [];
+        foreach ($request->days as $day) {
+            $date = $day['date'];
+            if (!isset($mergedDays[$date])) {
+                $mergedDays[$date] = [];
+            }
+            $mergedDays[$date] = array_merge($mergedDays[$date], $day['time_slots']);
+        }
+
+        // ✅ Step 2: Check overlaps within request data
+        foreach ($mergedDays as $date => $slots) {
+            // Sort by start_time
+            usort($slots, fn($a, $b) => strcmp($a['start_time'], $b['start_time']));
+
+            for ($i = 0; $i < count($slots) - 1; $i++) {
+                if ($slots[$i]['end_time'] > $slots[$i + 1]['start_time']) {
+                    $errors[] = "Overlapping slots in request on {$date} between {$slots[$i]['start_time']}–{$slots[$i]['end_time']} and {$slots[$i+1]['start_time']}–{$slots[$i+1]['end_time']}.";
+                }
+            }
+        }
+
+        // ✅ Step 3: Check overlaps against database
+        foreach ($mergedDays as $date => $slots) {
+            foreach ($slots as $slot) {
+                $conflict = Availability::where('user_id', $userId)
+                    ->where('date', $date)
+                    ->where(function ($query) use ($slot) {
+                        $query->whereBetween('start_time', [$slot['start_time'], $slot['end_time']])
+                            ->orWhereBetween('end_time', [$slot['start_time'], $slot['end_time']])
+                            ->orWhere(function ($q) use ($slot) {
+                                $q->where('start_time', '<=', $slot['start_time'])
+                                    ->where('end_time', '>=', $slot['end_time']);
+                            });
+                    })
+                    ->exists();
+
+                if ($conflict) {
+                    $errors[] = "Conflict with existing DB slot on {$date} for {$slot['start_time']}–{$slot['end_time']}.";
+                }
+            }
+        }
+
+        // ✅ Step 4: If errors found, return them
+        if (!empty($errors)) {
+            return response()->json([
+                'message' => 'Validation failed',
+                'errors'  => $errors
+            ], 422);
+        }
+
+        // ✅ Step 5: Save slots if no errors
+        foreach ($mergedDays as $date => $slots) {
+            foreach ($slots as $slot) {
+                $created[] = Availability::create([
+                    'user_id'    => $userId,
+                    'date'       => \Carbon\Carbon::parse($date)->format('Y-m-d'),
+                    'start_time' => $slot['start_time'],
+                    'end_time'   => $slot['end_time'],
+                ]);
+            }
+        }
+
+        return response()->json([
+            'message' => 'Availability slots saved successfully',
+            'data'    => $created
+        ]);
+    }
+
+
+        public function book_teleconsultation(Request $request)
         {
-            $validator = Validator::make($request->all(), [
-                'days' => 'required|array|min:1|max:7',
-                'days.*.date' => 'required|date|after_or_equal:today',
-                'days.*.time_slots' => 'required|array|min:1',
-                'days.*.time_slots.*.start_time' => 'required|date_format:H:i',
-                'days.*.time_slots.*.end_time'   => 'required|date_format:H:i',
+            $request->validate([
+               // 'user_id'   => 'required|exists:users,id',
+                'type'      => 'required|string|max:100',
+                'service'   => 'required|string|max:100',
+                'date'      => 'required|date|after_or_equal:today',
+                'time'      => 'required|date_format:H:i',
+                'language'  => 'required|string|max:50',
             ]);
+            
+            $userId = 1;
+            // dd($userId);
 
-            $validator->after(function ($validator) use ($request) {
-                foreach ($request->days as $dayIndex => $day) {
-                    foreach ($day['time_slots'] as $slotIndex => $slot) {
-                        if (strtotime($slot['end_time']) <= strtotime($slot['start_time'])) {
-                            $validator->errors()->add(
-                                "days.$dayIndex.time_slots.$slotIndex.end_time",
-                                "End time must be after start time for slot #".($slotIndex+1)." on day ".($day['date'])
-                            );
-                        }
-                    }
-                }
-            });
+            // ✅ Step 1: Check availability
+            $available = Availability::where('user_id', $userId)
+                ->where('date', $request->date)
+                ->where('start_time', '<=', $request->time)
+                ->where('end_time', '>=', $request->time)
+                ->exists();
 
-            if ($validator->fails()) {
-                return response()->json(['errors' => $validator->errors()], 422);
+            if (!$available) {
+                return response()->json([
+                    'message' => "No availability found for user {$userId} on {$request->date} at {$request->time}"
+                ], 422);
             }
 
-            // If validation passes
-            $userId = 1; // example
-            $created = [];
+            // ✅ Step 2: Check if already booked
+            $alreadyBooked = BookTeleconsultation::where('user_id', $userId)
+                ->where('date', $request->date)
+                ->where('time', $request->time)
+                ->exists();
 
-            foreach ($request->days as $day) {
-                foreach ($day['time_slots'] as $slot) {
-                    $created[] = Availability::create([
-                        'user_id'    => $userId,
-                        'date'       => \Carbon\Carbon::parse($day['date'])->format('Y-m-d'),
-                        'start_time' => $slot['start_time'],
-                        'end_time'   => $slot['end_time'],
-                    ]);
-                }
+            if ($alreadyBooked) {
+                return response()->json([
+                    'message' => "Time slot already booked for {$request->date} at {$request->time}"
+                ], 422);
             }
+
+            // ✅ Step 3: Save booking
+            $booking = BookTeleconsultation::create([
+                'user_id'  => $userId,
+                'type'     => $request->type,
+                'service'  => $request->service,
+                'date'     => $request->date,
+                'time'     => $request->time,
+                'language' => $request->language,
+            ]);
 
             return response()->json([
-                'message' => 'Availability slots saved successfully',
-                'data'    => $created
-            ]);
+                'message' => 'Teleconsultation booked successfully',
+                'data'    => $booking
+            ], 201);
         }
+
+
+       public function get_book_teleconsultation(){
+            $user_id = 1;
+
+            $booking =  BookTeleconsultation::where('user_id', $user_id)->get();
+
+                return response()->json([
+                'message' => 'Teleconsultation booked successfully',
+                'data'    => $booking
+            ], 201);
+       }
+
+       	public function testing_center(Request $request)
+		{
+			$request->validate([
+				'district_id' => 'required|integer',
+				'state_code'  => 'required|integer',
+			]);
+
+			$centres = CentreMaster::where('district_id', $request->district_id)
+						->where('state_code', $request->state_code)
+						->get();
+
+			if ($centres->isEmpty()) {
+				return response()->json([
+					'status'  => false,
+					'message' => 'No testing centers found',
+					'data'    => []
+				], 404);
+			}
+
+			return response()->json([
+				'status'  => true,
+				'message' => 'Testing centers fetched successfully',
+				'data'    => $centres
+			]);
+	    }
+
+        public function get_questionaire()
+            {
+                $questions = RiskAssessmentQuestionnaire::with(['answers'])->get();
+
+                $formatted = $questions->map(function ($q) {
+                    return [
+                        'question_id'       => $q->question_id,
+                        'question'          => $q->question,
+                        'question_mr'       => $q->question_mr,
+                        'question_hi'       => $q->question_hi,
+                        'question_te'       => $q->question_te,
+                        'question_ta'       => $q->question_ta,
+                        'question_slug'     => $q->question_slug,
+                        'answer_input_type' => $q->answer_input_type,
+                        'priority'          => $q->priority,
+                        'options' => $q->answers->map(function ($a) {
+                            return [
+                                'answer_id'   => $a->answer_id,
+                                'answer'      => $a->answer,
+                                'answer_mr'   => $a->answer_mr,
+                                'answer_hi'   => $a->answer_hi,
+                                'answer_te'   => $a->answer_te,
+                                'answer_ta'   => $a->answer_ta,
+                                'answer_slug' => $a->answer_slug,
+                                'weight'      => $a->weight,
+                            ];
+                        }),
+                    ];
+                });
+
+                return response()->json([
+                    'status'  => true,
+                    'message' => 'Questionnaire fetched successfully',
+                    'data'    => $formatted
+                ]);
+            }
+
 
     
 }
