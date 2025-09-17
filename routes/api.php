@@ -23,6 +23,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 Route::post('/user/send-otp', [UserApiController::class, 'sendOTP']);
 Route::post('/user/verify-otp', [UserApiController::class, 'verifyOTP']);
 
+
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user/profile', [UserApiController::class, 'getUserDetails']);
     Route::post('/user/update', [UserApiController::class, 'updateUser']);
