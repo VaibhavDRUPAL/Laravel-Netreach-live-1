@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
@@ -19,6 +18,7 @@ use App\Models\Availability;
 use App\Models\SelfModule\RiskAssessmentQuestionnaire;
 use App\Models\BookTeleconsultation;
 //    use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Storage;
 
 class UserApiController extends Controller
 {
@@ -98,7 +98,7 @@ class UserApiController extends Controller
         $otpData = OTPMaster::where('phone_no', $mobileNo)
             ->where('otp', $request->otp)
             ->first();
-        // dd($otpData);
+        // // dd($otpData);
         if (!$otpData) {
             return response()->json([
                 'status' => false,
@@ -134,7 +134,7 @@ class UserApiController extends Controller
      public function updateUser(Request $request)
     {
         $user = $request->user(); // or auth()->user()
-
+        // // dd($user);
         if (!$user) {
             return response()->json([
                 'status' => false,
@@ -143,30 +143,41 @@ class UserApiController extends Controller
         }
 
 
-        // ✅ Validation for update
-        $request->validate([
-            'email'    => 'nullable|email',
-            'name'     => 'nullable|string|max:100',
-            'password' => 'nullable|string|min:6'
-        ]);
+         // ✅ Validation rules
+            $request->validate([
+                'email'           => 'nullable|email',
+                'name'            => 'nullable|string|max:100',
+                'last_name'       => 'nullable|string|max:100',
+                'blood_group'     => 'nullable|string|max:10',
+                'gender'          => 'nullable|string|max:10',
+                'state'           => 'nullable|string|max:100',
+                'district'        => 'nullable|string|max:100',
+                'preferd_language'=> 'nullable|string|max:50',
+                'user_type'       => 'nullable|string|max:50',
+                'password'        => 'nullable|string|min:6',
+            ]);
 
-        $updateData = [];
+            // ✅ Prepare update data (jitna request me aaya ho)
+            $updateData = $request->only([
+                'name',
+                'last_name',
+                'email',
+                'blood_group',
+                'gender',
+                'state',
+                'district',
+                'preferd_language',
+                'user_type'
+            ]);
 
-        if ($request->filled('name')) {
-            $updateData['name'] = $request->name;
-        }
+            // ✅ Agar password aaya to hash bhi kare
+            if ($request->filled('password')) {
+                $updateData['txt_password'] = $request->password;
+                $updateData['password']     = Hash::make($request->password);
+            }
 
-        if ($request->filled('email')) {
-            $updateData['email'] = $request->email;
-        }
-
-        if ($request->filled('password')) {
-            $updateData['txt_password'] = $request->password;
-            $updateData['password']     = Hash::make($request->password);
-        }
-
-        // ✅ Update details
-        $user->update($updateData);
+            // ✅ User ko update kare
+            $user->update($updateData);
 
         return response()->json([
             'status'  => 'success',
@@ -412,171 +423,45 @@ class UserApiController extends Controller
             'data' => $districts,
         ]);
     }
-    // public function login(Request $request)
-    // {
-    //     // Validation
-    //     $request->validate([
-    //         'phone_number' => 'required|string|max:15',
-    //         'password'     => 'nullable|string|min:6',
-    //         'otp'          => 'nullable|string|min:4|max:6',
-    //     ]);
+      
 
-    //     // User check
-    //     $user = User::where('phone_number', $request->phone_number)->first();
-
-    //     if (!$user) {
-    //         return response()->json([
-    //             'status' => false,
-    //             'message' => 'Mobile number not found'
-    //         ], 404);
-    //     }
-
-    //     // If password is given
-    //     if ($request->filled('password')) {
-    //         if (!Hash::check($request->password, $user->password)) {
-    //             return response()->json([
-    //                 'status' => false,
-    //                 'message' => 'Invalid password'
-    //             ], 401);
-    //         }
-    //     }
-    //     // Else if OTP is given
-    //     elseif ($request->filled('otp')) {
-    //         if ($user->otp !== $request->otp) {
-    //             return response()->json([
-    //                 'status' => false,
-    //                 'message' => 'Invalid OTP'
-    //             ], 401);
-    //         }
-    //     } else {
-    //         return response()->json([
-    //             'status' => false,
-    //             'message' => 'Please provide password or OTP'
-    //         ], 422);
-    //     }
-
-    //     // ✅ Login success: Save user in session
-    //     Auth::login($user);
-
-    //     // ✅ (Optional) If API is being used, generate token also
-    //     $token = $user->createToken('API Token')->plainTextToken;
-
-    //     return response()->json([
-    //         'status'  => true,
-    //         'message' => 'Login successful',
-    //         'token'   => $token,   // API ke liye
-    //         'user'    => $user     // Website ke liye session me already login ho gaya hai
-    //     ]);
-    // }
-
-    //     public function login(Request $request)
-    // {
-    //     $request->validate([
-    //         'phone_number' => 'required|string|max:15',
-    //         'password'     => 'nullable|string|min:6',
-    //         'otp'          => 'nullable|string|min:4|max:6',
-    //     ]);
-
-    //     $user = User::where('phone_number', $request->phone_number)->first();
-
-    //     if (!$user) {
-    //         return response()->json([
-    //             'status' => false,
-    //             'message' => 'Mobile number not found'
-    //         ], 404);
-    //     }
-
-    //     // If password is given, check password
-    //     if ($request->filled('password')) {
-    //         if (!Hash::check($request->password, $user->password)) {
-    //             return response()->json([
-    //                 'status' => false,
-    //                 'message' => 'Invalid password'
-    //             ], 401);
-    //         }
-    //     }
-    //     // Else if OTP is given, check OTP
-    //     elseif ($request->filled('otp')) {
-    //         if ($user->otp !== $request->otp) {
-    //             return response()->json([
-    //                 'status' => false,
-    //                 'message' => 'Invalid OTP'
-    //             ], 401);
-    //         }
-    //     } else {
-    //         return response()->json([
-    //             'status' => false,
-    //             'message' => 'Please provide password or OTP'
-    //         ], 422);
-    //     }
-
-    //     // If reached here, login success
-    //     $token = $user->createToken('API Token')->plainTextToken;
-
-    //     return response()->json([
-    //         'status' => true,
-    //         'message' => 'Login successful',
-    //         'token'   => $token,
-    //         'user'    => $user
-    //     ]);
-    // }
-
-    // public function createUser(Request $request)
-    // {
-    //     $request->validate([
-    //         'phone_number' => 'required|string|max:15',
-    //         'name' => 'nullable|string|max:255',
-    //         'email' => 'nullable|email',
-    //         'password' => 'nullable|string|min:6',
-    //         'role' => 'nullable|string'
-    //     ]);
-
-    //     // Mobile number check
-    //     $existingUser = User::where('phone_number', $request->phone_number)->first();
-
-    //     if ($existingUser) {
-    //         return response()->json([
-    //             'status' => 'error',
-    //             'message' => 'Account already exists with this mobile number',
-    //             'user' => $existingUser
-    //         ], 200);
-    //     }
-
-    //     // User create
-    //     $userData = $request->only(['name', 'email', 'phone_number', 'txt_password']);
-    //     $user = User::create($userData);
-
-    //     if ($request->role) {
-    //         $user->assignRole($request->role);
-    //     }
-
-    //     return response()->json([
-    //         'status' => 'success',
-    //         'message' => 'Account created successfully',
-    //         'user' => $user
-    //     ], 201);
-    // }
-
-   
-
-
-        
-
-    public function create_time_slot(Request $request)
+    public function add_time_slot(Request $request)
     {
+
+        //// dd('fghfghgf');
+
         $request->validate([
             'days' => 'required|array|min:1|max:7',
             'days.*.date' => 'required|date|after_or_equal:today',
             'days.*.time_slots' => 'required|array|min:1',
             'days.*.time_slots.*.start_time' => 'required|date_format:H:i',
-            'days.*.time_slots.*.end_time'   => 'required|date_format:H:i|after:days.*.time_slots.*.start_time',
+            'days.*.time_slots.*.end_time'   => 'required|date_format:H:i',
         ]);
 
-        $userId = auth()->id() ?? 1; // fallback for testing
         $errors = [];
+        foreach ($request->days as $dayIndex => $day) {
+            foreach ($day['time_slots'] as $slotIndex => $slot) {
+                if (strtotime($slot['end_time']) <= strtotime($slot['start_time'])) {
+                    $errors["days.$dayIndex.time_slots.$slotIndex.end_time"] = [
+                        "The end time must be after the start time."
+                    ];
+                }
+            }
+        }
+
+        if (!empty($errors)) {
+            return response()->json([
+                'message' => 'Validation failed',
+                'errors'  => $errors
+            ], 422);
+        }
+
+        $userId = $request->user(); 
+        $userId = 183; 
+       // // dd($userId);
         $created = [];
 
-        // ✅ Step 1: Merge slots for the same date
+        // ✅ Merge slots
         $mergedDays = [];
         foreach ($request->days as $day) {
             $date = $day['date'];
@@ -586,11 +471,9 @@ class UserApiController extends Controller
             $mergedDays[$date] = array_merge($mergedDays[$date], $day['time_slots']);
         }
 
-        // ✅ Step 2: Check overlaps within request data
+        // ✅ Check overlaps
         foreach ($mergedDays as $date => $slots) {
-            // Sort by start_time
             usort($slots, fn($a, $b) => strcmp($a['start_time'], $b['start_time']));
-
             for ($i = 0; $i < count($slots) - 1; $i++) {
                 if ($slots[$i]['end_time'] > $slots[$i + 1]['start_time']) {
                     $errors[] = "Overlapping slots in request on {$date} between {$slots[$i]['start_time']}–{$slots[$i]['end_time']} and {$slots[$i+1]['start_time']}–{$slots[$i+1]['end_time']}.";
@@ -598,28 +481,6 @@ class UserApiController extends Controller
             }
         }
 
-        // ✅ Step 3: Check overlaps against database
-        foreach ($mergedDays as $date => $slots) {
-            foreach ($slots as $slot) {
-                $conflict = Availability::where('user_id', $userId)
-                    ->where('date', $date)
-                    ->where(function ($query) use ($slot) {
-                        $query->whereBetween('start_time', [$slot['start_time'], $slot['end_time']])
-                            ->orWhereBetween('end_time', [$slot['start_time'], $slot['end_time']])
-                            ->orWhere(function ($q) use ($slot) {
-                                $q->where('start_time', '<=', $slot['start_time'])
-                                    ->where('end_time', '>=', $slot['end_time']);
-                            });
-                    })
-                    ->exists();
-
-                if ($conflict) {
-                    $errors[] = "Conflict with existing DB slot on {$date} for {$slot['start_time']}–{$slot['end_time']}.";
-                }
-            }
-        }
-
-        // ✅ Step 4: If errors found, return them
         if (!empty($errors)) {
             return response()->json([
                 'message' => 'Validation failed',
@@ -627,15 +488,19 @@ class UserApiController extends Controller
             ], 422);
         }
 
-        // ✅ Step 5: Save slots if no errors
+        // ✅ Save
         foreach ($mergedDays as $date => $slots) {
             foreach ($slots as $slot) {
-                $created[] = Availability::create([
-                    'user_id'    => $userId,
-                    'date'       => \Carbon\Carbon::parse($date)->format('Y-m-d'),
-                    'start_time' => $slot['start_time'],
-                    'end_time'   => $slot['end_time'],
-                ]);
+               $created[] = Availability::firstOrCreate(
+                            [
+                                'user_id'    => $userId,
+                                'date'       => \Carbon\Carbon::parse($date)->format('Y-m-d'),
+                                'start_time' => $slot['start_time'],
+                                'end_time'   => $slot['end_time'],
+                            ],
+                            [] // additional default values if needed
+                        );
+
             }
         }
 
@@ -644,6 +509,7 @@ class UserApiController extends Controller
             'data'    => $created
         ]);
     }
+
 
 
         public function book_teleconsultation(Request $request)
@@ -658,7 +524,7 @@ class UserApiController extends Controller
             ]);
             
             $userId = 1;
-            // dd($userId);
+            // // dd($userId);
 
             // ✅ Step 1: Check availability
             $available = Availability::where('user_id', $userId)
@@ -740,7 +606,7 @@ class UserApiController extends Controller
 	    }
 
         public function get_questionaire()
-            {
+        {
                 $questions = RiskAssessmentQuestionnaire::with(['answers'])->get();
 
                 $formatted = $questions->map(function ($q) {
@@ -774,7 +640,116 @@ class UserApiController extends Controller
                     'message' => 'Questionnaire fetched successfully',
                     'data'    => $formatted
                 ]);
+        }
+
+         public function get_notifications()
+         {
+
+         }
+
+
+
+         
+         
+    public function update_profile(Request $request)
+    {
+        $user = $request->user(); // ✅ Login user
+        // // dd($user);
+        if (!$user) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Unauthenticated'
+            ], 401);
+        }
+
+        // ✅ Validation
+        $request->validate([
+            'user_picture' => 'required|image|mimes:jpg,jpeg,png|max:2048'
+        ]);
+        // ✅ Save file in storage/app/public/profile_pics
+        $path = $request->file('user_picture')->store('user_picture', 'public');
+        // // dd($path);
+        
+        // ✅ Old image delete (agar pehle se save ho)
+        if ($user->user_picture) {
+            Storage::disk('public')->delete($user->user_picture);
+        }
+
+        // ✅ Update in DB
+        $user->user_picture = $path;
+        $user->save();
+
+        return response()->json([
+            'status'  => true,
+            'message' => 'Profile picture updated successfully',
+            'user_picture_url' => asset('storage/' . $path)
+        ]);
+    }
+
+
+    public function get_profile_pic(Request $request)
+    {
+        $user = $request->user(); // ✅ login user
+
+        if (!$user) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Unauthenticated'
+            ], 401);
+        }
+
+        return response()->json([
+            'status'  => true,
+            'profile_pic_url' => $user->user_picture 
+                ? asset('storage/' . $user->user_picture) 
+                : null
+        ]);
+    }
+
+
+    public function get_time_slot(Request $request)
+    {   
+
+        // dd($request->user());
+        try {
+            $userId = $request->user()->id;
+            // $userId = 183;
+
+            // ✅ Fetch slots for user, grouped by date
+            $availabilities = Availability::where('user_id', $userId)
+                ->orderBy('date')
+                ->orderBy('start_time')
+                ->get()
+                ->groupBy('date');
+
+            // ✅ Format response
+            $data = [];
+            foreach ($availabilities as $date => $slots) {
+                $data[] = [
+                    'date' => $date,
+                    'time_slots' => $slots->map(function ($slot) {
+                        return [
+                            'start_time' => $slot->start_time,
+                            'end_time'   => $slot->end_time,
+                        ];
+                    })->values()
+                ];
             }
+
+            return response()->json([
+                'message' => 'Availability slots fetched successfully',
+                'data'    => $data
+            ], 200);
+
+        } catch (\Throwable $e) {
+            return response()->json([
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ], 500);
+        }
+    }
+
+
 
 
     

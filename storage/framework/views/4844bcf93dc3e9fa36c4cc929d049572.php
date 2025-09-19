@@ -1,1 +1,0 @@
-<a href="<?php echo e(route('admin.self-risk-assessment.appointment-by-id', ['id' => $id])); ?>">✎</a><?php /**PATH /var/www/netreach2/resources/views/self/admin/ajax/link.blade.php ENDPATH**/ ?>

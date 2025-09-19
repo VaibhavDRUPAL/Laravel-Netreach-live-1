@@ -26,16 +26,21 @@ Route::post('/user/verify-otp', [UserApiController::class, 'verifyOTP']);
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user/profile', [UserApiController::class, 'getUserDetails']);
     Route::post('/user/update', [UserApiController::class, 'updateUser']);
+    Route::post('/user/update_profile', [UserApiController::class, 'update_profile']);
+    Route::post('/user/get_profile_pic', [UserApiController::class, 'get_profile_pic']);
+    Route::post('/add_time_slot', [UserApiController::class, 'add_time_slot']);
+    Route::post('/get_time_slot', [UserApiController::class, 'get_time_slot']);
 });
 // Route::get('/user/fetch', [UserApiController::class, 'getUserDetails']);
 
 Route::post('/user/questionnaire', [UserApiController::class, 'questionnaire']);
 Route::post('/user/book-appointment', [UserApiController::class, 'book_appointment']);
-Route::post('/create_time_slot', [UserApiController::class, 'create_time_slot']);
+
 Route::post('/user/book_teleconsultation', [UserApiController::class, 'book_teleconsultation']);
 Route::get('/user/get_book_teleconsultation', [UserApiController::class, 'get_book_teleconsultation']);
 Route::get('/get_state', [UserApiController::class, 'get_state']);
 Route::get('/get_district', [UserApiController::class, 'get_district']);
 Route::post('/testing_center', [UserApiController::class, 'testing_center']);
 Route::get('/get_questionaire', [UserApiController::class, 'get_questionaire']);
+Route::get('/get_notifications', [UserApiController::class, 'get_notifications']);
 // Route::get('/user/check', [UserApiController::class, 'check']);

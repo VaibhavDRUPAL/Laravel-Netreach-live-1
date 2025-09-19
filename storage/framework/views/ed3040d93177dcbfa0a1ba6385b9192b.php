@@ -1,1 +1,0 @@
-<?php /**PATH /var/www/netreach2/resources/views/survey/whatsaap.blade.php ENDPATH**/ ?>
