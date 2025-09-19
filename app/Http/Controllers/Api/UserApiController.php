@@ -607,40 +607,43 @@ class UserApiController extends Controller
 
         public function get_questionaire()
         {
-                $questions = RiskAssessmentQuestionnaire::with(['answers'])->get();
+            $questions = RiskAssessmentQuestionnaire::with(['answers'])
+                ->orderBy('priority', 'asc') // 👈 priority ascending order
+                ->get();
 
-                $formatted = $questions->map(function ($q) {
-                    return [
-                        'question_id'       => $q->question_id,
-                        'question'          => $q->question,
-                        'question_mr'       => $q->question_mr,
-                        'question_hi'       => $q->question_hi,
-                        'question_te'       => $q->question_te,
-                        'question_ta'       => $q->question_ta,
-                        'question_slug'     => $q->question_slug,
-                        'answer_input_type' => $q->answer_input_type,
-                        'priority'          => $q->priority,
-                        'options' => $q->answers->map(function ($a) {
-                            return [
-                                'answer_id'   => $a->answer_id,
-                                'answer'      => $a->answer,
-                                'answer_mr'   => $a->answer_mr,
-                                'answer_hi'   => $a->answer_hi,
-                                'answer_te'   => $a->answer_te,
-                                'answer_ta'   => $a->answer_ta,
-                                'answer_slug' => $a->answer_slug,
-                                'weight'      => $a->weight,
-                            ];
-                        }),
-                    ];
-                });
+            $formatted = $questions->map(function ($q) {
+                return [
+                    'question_id'       => $q->question_id,
+                    'question'          => $q->question,
+                    'question_mr'       => $q->question_mr,
+                    'question_hi'       => $q->question_hi,
+                    'question_te'       => $q->question_te,
+                    'question_ta'       => $q->question_ta,
+                    'question_slug'     => $q->question_slug,
+                    'answer_input_type' => $q->answer_input_type,
+                    'priority'          => $q->priority,
+                    'options' => $q->answers->map(function ($a) {
+                        return [
+                            'answer_id'   => $a->answer_id,
+                            'answer'      => $a->answer,
+                            'answer_mr'   => $a->answer_mr,
+                            'answer_hi'   => $a->answer_hi,
+                            'answer_te'   => $a->answer_te,
+                            'answer_ta'   => $a->answer_ta,
+                            'answer_slug' => $a->answer_slug,
+                            'weight'      => $a->weight,
+                        ];
+                    }),
+                ];
+            });
 
-                return response()->json([
-                    'status'  => true,
-                    'message' => 'Questionnaire fetched successfully',
-                    'data'    => $formatted
-                ]);
+            return response()->json([
+                'status'  => true,
+                'message' => 'Questionnaire fetched successfully',
+                'data'    => $formatted
+            ]);
         }
+
 
          public function get_notifications()
          {
