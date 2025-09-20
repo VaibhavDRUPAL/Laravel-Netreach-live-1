@@ -2,14 +2,14 @@
     <div class="scrollbar-inner">
         <!-- Brand -->
         <div class="sidenav-header  d-flex  align-items-center">
-            <a class="navbar-brand" href="{{ route('home') }}" data-toggle="tooltip"
-                data-original-title="{{ setting('company_name') }}">
-                @if (setting('company_logo'))
-                    <img alt="{{ setting('company_name') }}" height="45" class="navbar-brand-img"
-                        src="{{ asset('assets/img/web/logo.png') }}">
-                @else
-                    {{ substr(setting('company_name'), 0, 15) }}...
-                @endif
+            <a class="navbar-brand" href="<?php echo e(route('home')); ?>" data-toggle="tooltip"
+                data-original-title="<?php echo e(setting('company_name')); ?>">
+                <?php if(setting('company_logo')): ?>
+                    <img alt="<?php echo e(setting('company_name')); ?>" height="45" class="navbar-brand-img"
+                        src="<?php echo e(asset('assets/img/web/logo.png')); ?>">
+                <?php else: ?>
+                    <?php echo e(substr(setting('company_name'), 0, 15)); ?>...
+                <?php endif; ?>
             </a>
             <div class=" ml-auto ">
                 <!-- Sidenav toggler -->
@@ -29,215 +29,187 @@
                 <!-- Nav items -->
                 <ul class="navbar-nav">
                     <li class="nav-item">
-                        <a class="nav-link {{ request()->is('home*') ? 'active' : '' }}" href="{{ route('home') }}">
+                        <a class="nav-link <?php echo e(request()->is('home*') ? 'active' : ''); ?>" href="<?php echo e(route('home')); ?>">
                             <i class="ni ni-shop text-primary"></i>
                             <span class="nav-link-text">Dashboard</span>
                         </a>
                     </li>
-                    @can('update-settings')
+                    <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('update-settings')): ?>
                         <li class="nav-item">
-                            <a class="nav-link {{ request()->is('settings*') ? 'active' : '' }}"
-                                href="{{ route('settings.index') }}">
+                            <a class="nav-link <?php echo e(request()->is('settings*') ? 'active' : ''); ?>"
+                                href="<?php echo e(route('settings.index')); ?>">
                                 <i class="ni ni-settings-gear-65 text-primary"></i>
                                 <span class="nav-link-text">Manage Settings</span>
                             </a>
                         </li>
-                    @endcan
-                    @canany(['view-category', 'create-category'])
-                        <!--<li class="nav-item">                                                                                                                                                     @can('view-category')
+                    <?php endif; ?>
+                    <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->any(['view-category', 'create-category'])): ?>
+                        <!--<li class="nav-item">                                                                                                                                                     <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('view-category')): ?>
         <li class="nav-item">                                                                                                                                                                                                                                                                         </li>
-        @endcan                                                                                                                                                      @can('create-category')
+        <?php endif; ?>                                                                                                                                                      <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('create-category')): ?>
         <li class="nav-item">                                                                                                                                                                                                                                                                         </li>
-    @endcan                                                                                                                         </li>--->
-                    @endcan
-                    @canany(['view-post', 'create-post'])
-                        <!--<li class="nav-item">                                                                                                      @can('view-post')
+    <?php endif; ?>                                                                                                                         </li>--->
+                    <?php endif; ?>
+                    <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->any(['view-post', 'create-post'])): ?>
+                        <!--<li class="nav-item">                                                                                                      <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('view-post')): ?>
         <li class="nav-item">                                                                                                                                                                                                                                                                               </li>
-        @endcan                                                                                                                                                    @can('create-post')
+        <?php endif; ?>                                                                                                                                                    <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('create-post')): ?>
         <li class="nav-item">                                                                                                                                                                                                                                                                               </li>
-    @endcan                                                                                                                                         </li>-->
-                    @endcan
-                    @canany(['view_survey', 'm-e-user-views', 'm-e-user-download'])
+    <?php endif; ?>                                                                                                                                         </li>-->
+                    <?php endif; ?>
+                    <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->any(['view_survey', 'm-e-user-views', 'm-e-user-download'])): ?>
                         <li class="nav-item">
-                            <a class="nav-link {{ request()->is('survey*') ? 'active' : '' }}" href="#navbar-survey"
+                            <a class="nav-link <?php echo e(request()->is('survey*') ? 'active' : ''); ?>" href="#navbar-survey"
                                 data-toggle="collapse" role="button" aria-expanded="true" aria-controls="navbar-users">
                                 <i class="fas text-primary fa-heart"></i>
                                 <span class="nav-link-text">Manage Survey</span>
                             </a>
                             <div class="collapse" id="navbar-survey">
                                 <ul class="nav nav-sm flex-column">
-                                    @canany(['view_survey', 'm-e-user-views', 'm-e-user-download'])
+                                    <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->any(['view_survey', 'm-e-user-views', 'm-e-user-download'])): ?>
                                         <li class="nav-item">
-                                            <a href="{{ route('survey.displaysecond') }}" class="nav-link"><span
+                                            <a href="<?php echo e(route('survey.displaysecond')); ?>" class="nav-link"><span
                                                     class="sidenav-mini-icon">D </span><span class="sidenav-normal">All
                                                     Survey</span></a>
                                         </li>
-                                    @endcan
-                                    @can('po-apporve-reject-data')
+                                    <?php endif; ?>
+                                    <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('po-apporve-reject-data')): ?>
                                         <li class="nav-item">
-                                            <a href="{{ route('survey.po.display') }}" class="nav-link"><span
+                                            <a href="<?php echo e(route('survey.po.display')); ?>" class="nav-link"><span
                                                     class="sidenav-mini-icon">D </span><span class="sidenav-normal">PO
                                                     Survey</span></a>
                                         </li>
-                                    @endcan
-                                    @can('credit-permission')
+                                    <?php endif; ?>
+                                    <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('credit-permission')): ?>
                                         <li class="nav-item">
-                                            <a href="{{ route('survey.credit') }}" class="nav-link"><span
+                                            <a href="<?php echo e(route('survey.credit')); ?>" class="nav-link"><span
                                                     class="sidenav-mini-icon">D </span><span class="sidenav-normal">Credit
                                                     Survey</span></a>
                                         </li>
-                                    @endcan
+                                    <?php endif; ?>
                                 </ul>
                             </div>
                         </li>
-                    @endcan
+                    <?php endif; ?>
 
-                     @canany(['view-announcement', 'create-announcement'])
+                     <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->any(['view-announcement', 'create-announcement'])): ?>
                         <li class="nav-item">
-                            <a class="nav-link {{ request()->is('announcement*') ? 'active' : '' }}" href="#navbar-announcement"
-                                data-toggle="collapse" role="button" aria-expanded="true" aria-controls="navbar-announcement">
+                            <a class="nav-link <?php echo e(request()->is('users*') ? 'active' : ''); ?>" href="#navbar-users"
+                                data-toggle="collapse" role="button" aria-expanded="true" aria-controls="navbar-users">
                                 <i class="fas text-primary fa-tasks"></i>
                                 <span class="nav-link-text">Manage Announcement</span>
                             </a>
-                            <div class="collapse" id="navbar-announcement">
+                            <div class="collapse" id="navbar-users">
                                 <ul class="nav nav-sm flex-column">
-                                    @can('view-announcement')
+                                    <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('view-announcement')): ?>
                                         <li class="nav-item">
-                                            <a href="{{ route('announcements.index') }}" class="nav-link"><span
+                                            <a href="<?php echo e(route('announcements.index')); ?>" class="nav-link"><span
                                                     class="sidenav-mini-icon">D </span><span class="sidenav-normal">All
                                                     Announcement</span></a>
                                         </li>
-                                    @endcan
-                                    @can('create-announcement')
+                                    <?php endif; ?>
+                                    <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('create-announcement')): ?>
                                         <li class="nav-item">
-                                            <a href="{{ route('announcements.create') }}" class="nav-link"><span
+                                            <a href="<?php echo e(route('announcements.create')); ?>" class="nav-link"><span
                                                     class="sidenav-mini-icon">D </span><span class="sidenav-normal">Add New
                                                     Announcement</span></a>
                                         </li>
-                                    @endcan
+                                    <?php endif; ?>
                                 </ul>
                             </div>
                         </li>
-                    @endcan
-
-                     @canany(['view-doctor', 'create-doctor'])
+                    <?php endif; ?>
+                    <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->any(['view-district', 'view-centre'])): ?>
                         <li class="nav-item">
-                            <a class="nav-link {{ request()->is('doctor*') ? 'active' : '' }}" href="#navbar-doctor"
-                                data-toggle="collapse" role="button" aria-expanded="true" aria-controls="navbar-doctor">
-                                <i class="fas text-primary fa-tasks"></i>
-                                <span class="nav-link-text">Manage doctor</span>
-                            </a>
-                            <div class="collapse" id="navbar-doctor">
-                                <ul class="nav nav-sm flex-column">
-                                    @can('view-doctor')
-                                        <li class="nav-item">
-                                            <a href="{{ route('doctors.index') }}" class="nav-link"><span
-                                                    class="sidenav-mini-icon">D </span><span class="sidenav-normal">All
-                                                    doctor</span></a>
-                                        </li>
-                                    @endcan
-                                    @can('create-doctor')
-                                        <li class="nav-item">
-                                            <a href="{{ route('doctors.create') }}" class="nav-link"><span
-                                                    class="sidenav-mini-icon">D </span><span class="sidenav-normal">Add New
-                                                    doctor</span></a>
-                                        </li>
-                                    @endcan
-                                </ul>
-                            </div>
-                        </li>
-                    @endcan
-                    @canany(['view-district', 'view-centre'])
-                        <li class="nav-item">
-                            <a class="nav-link {{ request()->is('district*') ? 'active' : '' }}" href="#navbar-district"
+                            <a class="nav-link <?php echo e(request()->is('district*') ? 'active' : ''); ?>" href="#navbar-district"
                                 data-toggle="collapse" role="button" aria-expanded="true" aria-controls="navbar-district">
                                 <i class="fas text-primary fa-heart"></i>
                                 <span class="nav-link-text">Manage Centre/State/District</span>
                             </a>
                             <div class="collapse" id="navbar-district">
                                 <ul class="nav nav-sm flex-column">
-                                    @can('view-district')
+                                    <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('view-district')): ?>
                                         <li class="nav-item">
-                                            <a href="{{ route('state.index') }}" class="nav-link"><span
+                                            <a href="<?php echo e(route('state.index')); ?>" class="nav-link"><span
                                                     class="sidenav-mini-icon">D </span><span class="sidenav-normal">All
                                                     State</span></a>
                                         </li>
                                         <li class="nav-item">
-                                            <a href="{{ route('district.index') }}" class="nav-link"><span
+                                            <a href="<?php echo e(route('district.index')); ?>" class="nav-link"><span
                                                     class="sidenav-mini-icon">D </span><span class="sidenav-normal">All
                                                     District</span></a>
                                         </li>
-                                    @endcan
-                                    @can('view-centre')
+                                    <?php endif; ?>
+                                    <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('view-centre')): ?>
                                         <li class="nav-item">
-                                            <a href="{{ route('all.centre.index') }}" class="nav-link"><span
+                                            <a href="<?php echo e(route('all.centre.index')); ?>" class="nav-link"><span
                                                     class="sidenav-mini-icon">D </span><span class="sidenav-normal">All
                                                     Centre</span></a>
                                         </li>
-                                    @endcan
+                                    <?php endif; ?>
                                 </ul>
                             </div>
                         </li>
-                    @endcan
-                    @canany(['view-user', 'create-user'])
+                    <?php endif; ?>
+                    <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->any(['view-user', 'create-user'])): ?>
                         <li class="nav-item">
-                            <a class="nav-link {{ request()->is('users*') ? 'active' : '' }}" href="#navbar-users"
+                            <a class="nav-link <?php echo e(request()->is('users*') ? 'active' : ''); ?>" href="#navbar-users"
                                 data-toggle="collapse" role="button" aria-expanded="true" aria-controls="navbar-users">
                                 <i class="fas text-primary fa-tasks"></i>
                                 <span class="nav-link-text">Manage Users</span>
                             </a>
                             <div class="collapse" id="navbar-users">
                                 <ul class="nav nav-sm flex-column">
-                                    @can('view-user')
+                                    <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('view-user')): ?>
                                         <li class="nav-item">
-                                            <a href="{{ route('users.index') }}" class="nav-link"><span
+                                            <a href="<?php echo e(route('users.index')); ?>" class="nav-link"><span
                                                     class="sidenav-mini-icon">D </span><span class="sidenav-normal">All
                                                     Users</span></a>
                                         </li>
-                                    @endcan
-                                    @can('create-user')
+                                    <?php endif; ?>
+                                    <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('create-user')): ?>
                                         <li class="nav-item">
-                                            <a href="{{ route('users.create') }}" class="nav-link"><span
+                                            <a href="<?php echo e(route('users.create')); ?>" class="nav-link"><span
                                                     class="sidenav-mini-icon">D </span><span class="sidenav-normal">Add New
                                                     User</span></a>
                                         </li>
-                                    @endcan
+                                    <?php endif; ?>
                                 </ul>
                             </div>
                         </li>
-                    @endcan
-                    @canany(['create-vm', 'update-vm', 'view-vm'])
+                    <?php endif; ?>
+                    <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->any(['create-vm', 'update-vm', 'view-vm'])): ?>
                         <li class="nav-item">
-                            <a class="nav-link {{ request()->is('users*') ? 'active' : '' }}" href="#navbar-users-vm"
+                            <a class="nav-link <?php echo e(request()->is('users*') ? 'active' : ''); ?>" href="#navbar-users-vm"
                                 data-toggle="collapse" role="button" aria-expanded="true" aria-controls="navbar-users">
                                 <i class="fas text-primary fa-heart"></i>
                                 <span class="nav-link-text">Manage PO/CO/VN</span>
                             </a>
                             <div class="collapse" id="navbar-users-vm">
                                 <ul class="nav nav-sm flex-column">
-                                    @can('view-vm')
+                                    <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('view-vm')): ?>
                                         <li class="nav-item">
-                                            <a href="{{ route('user.vms') }}" class="nav-link"><span
+                                            <a href="<?php echo e(route('user.vms')); ?>" class="nav-link"><span
                                                     class="sidenav-mini-icon">D </span><span class="sidenav-normal">All
                                                     PO/CO/VN</span></a>
                                         </li>
-                                    @endcan
+                                    <?php endif; ?>
                                 </ul>
                             </div>
                         </li>
-                    @endcan
-                    @canany(['view-permission', 'create-permission'])
+                    <?php endif; ?>
+                    <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->any(['view-permission', 'create-permission'])): ?>
                         <li class="nav-item">
-                            <a class="nav-link {{ request()->is('permissions*') ? 'active' : '' }}"
-                                href="{{ route('permissions.index') }}">
+                            <a class="nav-link <?php echo e(request()->is('permissions*') ? 'active' : ''); ?>"
+                                href="<?php echo e(route('permissions.index')); ?>">
                                 <i class="fas fa-lock-open text-primary"></i>
                                 <span class="nav-link-text">Manage Permissions</span>
                             </a>
                         </li>
-                    @endcan
-                    @canany(['e-shilp-permission'])
+                    <?php endif; ?>
+                    <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->any(['e-shilp-permission'])): ?>
                         <li class="nav-item">
-                            <a class="nav-link {{ request()->is('eslip*') ? 'active' : '' }}" href="#navbar-e-slip"
+                            <a class="nav-link <?php echo e(request()->is('eslip*') ? 'active' : ''); ?>" href="#navbar-e-slip"
                                 data-toggle="collapse" role="button" aria-expanded="true"
                                 aria-controls="navbar-e-slip">
                                 <i class="fas text-primary fa-heart"></i>
@@ -258,13 +230,13 @@
                             <div class="collapse" id="navbar-e-slip">
                                 <ul class="nav nav-sm flex-column">
                                     <li class="nav-item">
-                                        <a class="nav-link" href="{{ route('survey.eslip.new') }}">
+                                        <a class="nav-link" href="<?php echo e(route('survey.eslip.new')); ?>">
                                             <span class="sidenav-mini-icon">D </span>
                                             <span class="sidenav-normal">Manage E-Silp New</span>
                                         </a>
                                     </li>
                                     <li class="nav-item">
-                                        <a class="nav-link" href="{{ route('survey.eslip') }}">
+                                        <a class="nav-link" href="<?php echo e(route('survey.eslip')); ?>">
                                             <span class="sidenav-mini-icon">D </span>
                                             <span class="sidenav-normal">Manage E-Silp Old</span>
                                         </a>
@@ -286,92 +258,92 @@
 
 
 
-                    @endcan
-                    @canany(['create-app-platform'])
+                    <?php endif; ?>
+                    <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->any(['create-app-platform'])): ?>
                         <li class="nav-item">
-                            <a class="nav-link {{ request()->is('platform*') ? 'active' : '' }}"
-                                href="{{ route('platform.index') }}">
+                            <a class="nav-link <?php echo e(request()->is('platform*') ? 'active' : ''); ?>"
+                                href="<?php echo e(route('platform.index')); ?>">
                                 <i class="fas fa-lock-open text-primary"></i>
                                 <span class="nav-link-text">Manage Platform</span>
                             </a>
                         </li>
-                    @endcan
-                    @canany(['view-role', 'create-role'])
+                    <?php endif; ?>
+                    <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->any(['view-role', 'create-role'])): ?>
                         <li class="nav-item">
-                            <a class="nav-link {{ request()->is('roles*') ? 'active' : '' }}"
-                                href="{{ route('roles.index') }}">
+                            <a class="nav-link <?php echo e(request()->is('roles*') ? 'active' : ''); ?>"
+                                href="<?php echo e(route('roles.index')); ?>">
                                 <i class="fas fa-lock text-primary"></i>
                                 <span class="nav-link-text">Manage Roles</span>
                             </a>
                         </li>
-                    @endcan
-                    @canany(['create-vn-link-genrate'])
+                    <?php endif; ?>
+                    <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->any(['create-vn-link-genrate'])): ?>
                         <li class="nav-item">
-                            <a class="nav-link {{ request()->is('genrate*') ? 'active' : '' }}"
-                                href="{{ route('genrate.index') }}">
+                            <a class="nav-link <?php echo e(request()->is('genrate*') ? 'active' : ''); ?>"
+                                href="<?php echo e(route('genrate.index')); ?>">
                                 <i class="fas fa-images text-primary"></i>
                                 <span class="nav-link-text">Manage Generate Link</span>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link {{ request()->is('manually*') ? 'active' : '' }}"
-                                href="/?vncode={{ md5(Auth::user()->id) }}" target="_blank">
+                            <a class="nav-link <?php echo e(request()->is('manually*') ? 'active' : ''); ?>"
+                                href="/?vncode=<?php echo e(md5(Auth::user()->id)); ?>" target="_blank">
                                 <i class="fas fa-images text-primary"></i>
                                 <span class="nav-link-text"> Manually Create Appoinments</span>
                             </a>
                         </li>
-                    @endcan
-                    @canany(['view-activity-log'])
+                    <?php endif; ?>
+                    <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->any(['view-activity-log'])): ?>
                         <li class="nav-item">
-                            <a class="nav-link {{ request()->is('activity-log*') ? 'active' : '' }}"
-                                href="{{ route('activity-log.index') }}">
+                            <a class="nav-link <?php echo e(request()->is('activity-log*') ? 'active' : ''); ?>"
+                                href="<?php echo e(route('activity-log.index')); ?>">
                                 <i class="fas fa-history text-primary"></i>
                                 <span class="nav-link-text">Activity Log</span>
                             </a>
                         </li>
-                    @endcan
-                    @can('manual-dashboard')
+                    <?php endif; ?>
+                    <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('manual-dashboard')): ?>
                         <li class="nav-item">
-                            <a class="nav-link {{ request()->is('manually-dashboard*') ? 'active' : '' }}"
-                                href="{{ route('outreach.manually.dashboard') }}">
+                            <a class="nav-link <?php echo e(request()->is('manually-dashboard*') ? 'active' : ''); ?>"
+                                href="<?php echo e(route('outreach.manually.dashboard')); ?>">
                                 <i class="fas fa-history text-primary"></i>
                                 <span class="nav-link-text">Manually Dashboard</span>
                             </a>
                         </li>
-                    @endcan
-                    @if (!App::isProduction())
-                        @canany(['Center-user'])
+                    <?php endif; ?>
+                    <?php if(!App::isProduction()): ?>
+                        <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->any(['Center-user'])): ?>
                             <li class="nav-item">
-                                <a class="nav-link {{ request()->is('center-appointments*') ? 'active' : '' }}"
-                                    href="{{ route('center-appointments') }}">
+                                <a class="nav-link <?php echo e(request()->is('center-appointments*') ? 'active' : ''); ?>"
+                                    href="<?php echo e(route('center-appointments')); ?>">
                                     <i class="fas fa-history text-primary"></i>
                                     <span class="nav-link-text">Center Appointments</span>
                                 </a>
                             </li>
-                        @endcan
-                        @canany(['web-center-user'])
+                        <?php endif; ?>
+                        <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->any(['web-center-user'])): ?>
                             <li class="nav-item">
-                                <a class="nav-link {{ request()->is('web-center-appointments*') ? 'active' : '' }}"
-                                    href="{{ route('web-center-appointments') }}">
+                                <a class="nav-link <?php echo e(request()->is('web-center-appointments*') ? 'active' : ''); ?>"
+                                    href="<?php echo e(route('web-center-appointments')); ?>">
                                     <i class="fas fa-history text-primary"></i>
                                     <span class="nav-link-text">Web Center Appointments</span>
                                 </a>
                             </li>
-                        @endcan
-                    @endif
-                    @canany(['admin-notification'])
+                        <?php endif; ?>
+                    <?php endif; ?>
+                    <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->any(['admin-notification'])): ?>
                         <li class="nav-item">
-                            <a class="nav-link {{ request()->is('admin-notification*') ? 'active' : '' }}"
-                                href="{{ route('admin-notification') }}">
+                            <a class="nav-link <?php echo e(request()->is('admin-notification*') ? 'active' : ''); ?>"
+                                href="<?php echo e(route('admin-notification')); ?>">
                                 <i class="fas fa-history text-primary"></i>
                                 <span class="nav-link-text">Admin Notification</span>
                             </a>
                         </li>
-                    @endcan
-                    {{-- @if (!App::isProduction()) --}}
-                    @can('manage-outreach')
+                    <?php endif; ?>
+                    
+                    <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('manage-outreach')): ?>
                         <li class="nav-item">
-                            <a class="nav-link {{ request()->is('outreach*') ? 'active' : '' }}" href="#navbar-outreach"
+                            <a class="nav-link <?php echo e(request()->is('outreach*') ? 'active' : ''); ?>" href="#navbar-outreach"
                                 data-toggle="collapse" role="button" aria-expanded="true"
                                 aria-controls="navbar-outreach">
                                 <i class="fas text-primary fa-hand-holding-heart"></i>
@@ -380,50 +352,38 @@
                             <div class="collapse" id="navbar-outreach">
                                 <ul class="nav nav-sm flex-column">
                                     <li class="nav-item">
-                                        <a href="{{ route('outreach.profile.index') }}" class="nav-link"><span
+                                        <a href="<?php echo e(route('outreach.profile.index')); ?>" class="nav-link"><span
                                                 class="sidenav-mini-icon">D </span><span
                                                 class="sidenav-normal">Profile</span></a>
                                     </li>
-                                    {{-- <li class="nav-item">
-                                            <a href="{{ route('outreach.risk-assessment.index') }}"
-                                                class="nav-link"><span class="sidenav-mini-icon">D </span><span
-                                                    class="sidenav-normal">Risk Assessment</span></a>
-                                        </li> --}}
+                                    
                                     <li class="nav-item">
-                                        <a href="{{ route('outreach.referral-service.index') }}" class="nav-link"><span
+                                        <a href="<?php echo e(route('outreach.referral-service.index')); ?>" class="nav-link"><span
                                                 class="sidenav-mini-icon">D </span><span class="sidenav-normal">Referral
                                                 and Services</span></a>
                                     </li>
-                                    {{-- <li class="nav-item">
-                                            <a href="{{ route('outreach.counselling.index') }}" class="nav-link"><span
-                                                    class="sidenav-mini-icon">D </span><span
-                                                    class="sidenav-normal">Counselling Services</span></a>
-                                        </li> --}}
+                                    
                                     <li class="nav-item">
-                                        <a href="{{ route('outreach.plhiv.index') }}" class="nav-link"><span
+                                        <a href="<?php echo e(route('outreach.plhiv.index')); ?>" class="nav-link"><span
                                                 class="sidenav-mini-icon">D </span><span class="sidenav-normal">PLHIV
                                                 Tests</span></a>
                                     </li>
-                                    {{-- <li class="nav-item">
-                                            <a href="{{ route('outreach.sti.index') }}" class="nav-link"><span
-                                                    class="sidenav-mini-icon">D </span><span
-                                                    class="sidenav-normal">STI</span></a>
-                                        </li> --}}
+                                    
                                 </ul>
                             </div>
                         </li>
-                    @endcan
+                    <?php endif; ?>
                     <li class="nav-item">
-                        <a class="nav-link {{ request()->is('language*') ? 'active' : '' }}"
-                            href="{{ route('language.all') }}">
+                        <a class="nav-link <?php echo e(request()->is('language*') ? 'active' : ''); ?>"
+                            href="<?php echo e(route('language.all')); ?>">
                             <i class="fas fa-language text-primary"></i>
                             <span class="nav-link-text">Language</span>
                         </a>
                     </li>
-                    {{-- @endif --}}
-                    @can('manage-chatbot')
+                    
+                    <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('manage-chatbot')): ?>
                         <li class="nav-item">
-                            <a class="nav-link {{ request()->is('users*') ? 'active' : '' }}" href="#chatbot-nav"
+                            <a class="nav-link <?php echo e(request()->is('users*') ? 'active' : ''); ?>" href="#chatbot-nav"
                                 data-toggle="collapse" role="button" aria-expanded="true" aria-controls="navbar-users">
                                 <i class="fas text-primary fa-comment"></i>
                                 <span class="nav-link-text">Chatbot</span>
@@ -431,40 +391,40 @@
                             <div class="collapse" id="chatbot-nav">
                                 <ul class="nav nav-sm flex-column">
                                     <li class="nav-item">
-                                        <a href="{{ route('chatbot.greetings.all') }}" class="nav-link"><span
+                                        <a href="<?php echo e(route('chatbot.greetings.all')); ?>" class="nav-link"><span
                                                 class="sidenav-mini-icon"></span><span
                                                 class="sidenav-normal">Greetings</span></a>
                                     </li>
                                     <li class="nav-item">
-                                        <a href="{{ route('chatbot.questionnaire.all') }}" class="nav-link"><span
+                                        <a href="<?php echo e(route('chatbot.questionnaire.all')); ?>" class="nav-link"><span
                                                 class="sidenav-mini-icon"></span><span
                                                 class="sidenav-normal">Questionnaire</span></a>
                                     </li>
                                     <li class="nav-item">
-                                        <a href="{{ route('chatbot.users.all') }}" class="nav-link"><span
+                                        <a href="<?php echo e(route('chatbot.users.all')); ?>" class="nav-link"><span
                                                 class="sidenav-mini-icon"></span><span
                                                 class="sidenav-normal">Users</span></a>
                                     </li>
                                     <li class="nav-item">
-                                        <a href="{{ route('chatbot.language.counter') }}" class="nav-link"><span
+                                        <a href="<?php echo e(route('chatbot.language.counter')); ?>" class="nav-link"><span
                                                 class="sidenav-mini-icon"></span><span class="sidenav-normal">Language
                                                 Counter</span></a>
                                     </li>
                                     <li class="nav-item">
-                                        <a href="{{ route('chatbot.visitor.all') }}" class="nav-link"><span
+                                        <a href="<?php echo e(route('chatbot.visitor.all')); ?>" class="nav-link"><span
                                                 class="sidenav-mini-icon"></span><span class="sidenav-normal">Anonymous
                                                 Visitors</span></a>
                                     </li>
                                     <li class="nav-item">
-                                        <a href="{{ route('chatbot.content.all') }}" class="nav-link"><span
+                                        <a href="<?php echo e(route('chatbot.content.all')); ?>" class="nav-link"><span
                                                 class="sidenav-mini-icon"></span><span class="sidenav-normal">Other
                                                 Content</span></a>
                                     </li>
                                 </ul>
                             </div>
                         </li>
-                    @endcan
-                    @can('manage-blog')
+                    <?php endif; ?>
+                    <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('manage-blog')): ?>
                         <li class="nav-item">
                             <a class="nav-link" href="#blog-nav" data-toggle="collapse" role="button"
                                 aria-expanded="true" aria-controls="navbar-users">
@@ -474,15 +434,15 @@
                             <div class="collapse" id="blog-nav">
                                 <ul class="nav nav-sm flex-column">
                                     <li class="nav-item">
-                                        <a class="nav-link {{ request()->is('blog_categories_all') ? 'active' : '' }}"
-                                            href="{{ route('blog_categories_all') }}">
+                                        <a class="nav-link <?php echo e(request()->is('blog_categories_all') ? 'active' : ''); ?>"
+                                            href="<?php echo e(route('blog_categories_all')); ?>">
                                             <span class="sidenav-mini-icon"></span><span class="sidenav-normal">Blog
                                                 Categories</span>
                                         </a>
                                     </li>
                                     <li class="nav-item">
-                                        <a class="nav-link {{ request()->is('blogs_all') ? 'active' : '' }}"
-                                            href="{{ route('blogs_all') }}">
+                                        <a class="nav-link <?php echo e(request()->is('blogs_all') ? 'active' : ''); ?>"
+                                            href="<?php echo e(route('blogs_all')); ?>">
                                             <span class="sidenav-mini-icon"></span><span
                                                 class="sidenav-normal">Blogs</span>
                                         </a>
@@ -490,8 +450,8 @@
                                 </ul>
                             </div>
                         </li>
-                    @endcan
-                    @can('self-risk-assessment-tool')
+                    <?php endif; ?>
+                    <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('self-risk-assessment-tool')): ?>
                         <li class="nav-item">
                             <a class="nav-link" href="#self-risk-assessment" data-toggle="collapse" role="button"
                                 aria-expanded="true" aria-controls="navbar-users">
@@ -500,79 +460,79 @@
                             </a>
                             <div class="collapse" id="self-risk-assessment">
                                 <ul class="nav nav-sm flex-column">
-                                    @can('view-sra-questionnaire')
+                                    <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('view-sra-questionnaire')): ?>
                                         <li class="nav-item">
-                                            <a class="nav-link {{ request()->is('self-risk-assessment*') ? 'active' : '' }}"
-                                                href="{{ route('admin.self-risk-assessment.questionnaire') }}">
+                                            <a class="nav-link <?php echo e(request()->is('self-risk-assessment*') ? 'active' : ''); ?>"
+                                                href="<?php echo e(route('admin.self-risk-assessment.questionnaire')); ?>">
                                                 <span class="sidenav-mini-icon"></span><span
                                                     class="sidenav-normal">Questionnaire</span></a>
                                             </a>
                                         </li>
-                                    @endcan
-                                    @can('view-risk-assessments')
+                                    <?php endif; ?>
+                                    <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('view-risk-assessments')): ?>
                                         <li class="nav-item">
-                                            <a class="nav-link {{ request()->is('self-risk-assessment*') ? 'active' : '' }}"
-                                                href="{{ route('admin.self-risk-assessment.index') }}">
+                                            <a class="nav-link <?php echo e(request()->is('self-risk-assessment*') ? 'active' : ''); ?>"
+                                                href="<?php echo e(route('admin.self-risk-assessment.index')); ?>">
                                                 <span class="sidenav-mini-icon"></span><span class="sidenav-normal">Risk
                                                     Assessments</span></a>
                                             </a>
                                         </li>
-                                    @endcan
-                                    @can('view-sra-appointments')
+                                    <?php endif; ?>
+                                    <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('view-sra-appointments')): ?>
                                         <li class="nav-item">
-                                            <a class="nav-link {{ request()->is('self-risk-assessment*') ? 'active' : '' }}"
-                                                href="{{ route('admin.self-risk-assessment.appointment') }}">
+                                            <a class="nav-link <?php echo e(request()->is('self-risk-assessment*') ? 'active' : ''); ?>"
+                                                href="<?php echo e(route('admin.self-risk-assessment.appointment')); ?>">
                                                 <span class="sidenav-mini-icon"></span><span
                                                     class="sidenav-normal">Appointments</span>
                                             </a>
                                         </li>
-                                    @endcan
-                                    @can('view-sra-analytics')
+                                    <?php endif; ?>
+                                    <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('view-sra-analytics')): ?>
                                         <li class="nav-item">
-                                            <a class="nav-link {{ request()->is('self-risk-assessment*') ? 'active' : '' }}"
-                                                href="{{ route('admin.self-risk-assessment.analytics') }}">
+                                            <a class="nav-link <?php echo e(request()->is('self-risk-assessment*') ? 'active' : ''); ?>"
+                                                href="<?php echo e(route('admin.self-risk-assessment.analytics')); ?>">
                                                 <span class="sidenav-mini-icon"></span><span
                                                     class="sidenav-normal">Analytics</span>
                                             </a>
                                         </li>
-                                    @endcan
-                                    @can('view-combine-list')
+                                    <?php endif; ?>
+                                    <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('view-combine-list')): ?>
                                         <li class="nav-item">
-                                            <a class="nav-link {{ request()->is('self-risk-assessment*') ? 'active' : '' }}"
-                                                href="{{ route('admin.self-risk-assessment.combine') }}">
+                                            <a class="nav-link <?php echo e(request()->is('self-risk-assessment*') ? 'active' : ''); ?>"
+                                                href="<?php echo e(route('admin.self-risk-assessment.combine')); ?>">
                                                 <span class="sidenav-mini-icon"></span><span class="sidenav-normal">Master
                                                     Line List</span>
                                             </a>
                                         </li>
-                                    @endcan
+                                    <?php endif; ?>
                                 </ul>
                             </div>
                         </li>
-                    @endcan
+                    <?php endif; ?>
 
                     <li class="nav-item">
-                        <a class="nav-link {{ request()->is('calendar*') ? 'active' : '' }}"
-                            href="{{ route('calendar') }}">
+                        <a class="nav-link <?php echo e(request()->is('calendar*') ? 'active' : ''); ?>"
+                            href="<?php echo e(route('calendar')); ?>">
                             <i class="fas fa-calendar text-primary"></i>
                             <span class="nav-link-text">Calendar</span>
                         </a>
                     </li>
 
-                    @can('meet-counsellor')
+                    <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('meet-counsellor')): ?>
                         <li class="nav-item">
-                            <a class="nav-link {{ request()->is('meet*') ? 'active' : '' }}"
-                                href="{{ route('admin.meet-counsellor.index') }}">
+                            <a class="nav-link <?php echo e(request()->is('meet*') ? 'active' : ''); ?>"
+                                href="<?php echo e(route('admin.meet-counsellor.index')); ?>">
                                 <i class="far fa-handshake text-primary"></i>
                                 <span class="nav-link-text">Meet Counsellor</span>
                             </a>
                         </li>
-                    @endcan
+                    <?php endif; ?>
 
                     <li class="nav-item">
                         <hr class="my-3">
                     </li>
                     <!--<li class="nav-item">
-                            <a class="nav-link active active-pro" href="{{ route('components') }}">
+                            <a class="nav-link active active-pro" href="<?php echo e(route('components')); ?>">
                                 <i class="ni ni-send text-primary"></i>
                                 <span class="nav-link-text">Components</span>
                             </a>
@@ -582,3 +542,4 @@
         </div>
     </div>
 </nav>
+<?php /**PATH C:\xampp\htdocs\netreach_live\resources\views/includes/navbar.blade.php ENDPATH**/ ?>

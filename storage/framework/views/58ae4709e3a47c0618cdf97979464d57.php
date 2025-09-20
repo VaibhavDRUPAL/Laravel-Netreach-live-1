@@ -1,31 +1,31 @@
 <!DOCTYPE HTML>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<html lang="<?php echo e(str_replace('_', '-', app()->getLocale())); ?>">
 
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <!-- CSRF Token -->
-    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <meta name="csrf-token" content="<?php echo e(csrf_token()); ?>">
 
-    <title>{{ config('app.name', 'Laravel') }}</title>
+    <title><?php echo e(config('app.name', 'Laravel')); ?></title>
 
-    <link rel="stylesheet" href="{{ asset('assets/fonts/stylesheet.css') }}">
+    <link rel="stylesheet" href="<?php echo e(asset('assets/fonts/stylesheet.css')); ?>">
     <!-- Icons -->
-    <link rel="stylesheet" href="{{ asset('assets/vendor/nucleo/css/nucleo.css') }}" type="text/css">
-    <link rel="stylesheet" href="{{ asset('assets/vendor/@fortawesome/fontawesome-free/css/all.min.css') }}"
+    <link rel="stylesheet" href="<?php echo e(asset('assets/vendor/nucleo/css/nucleo.css')); ?>" type="text/css">
+    <link rel="stylesheet" href="<?php echo e(asset('assets/vendor/@fortawesome/fontawesome-free/css/all.min.css')); ?>"
         type="text/css">
     <!-- Page plugins -->
-    <link rel="stylesheet" href="{{ asset('assets/vendor/fullcalendar/dist/fullcalendar.min.css') }}">
-    <link rel="stylesheet" href="{{ asset('assets/vendor/sweetalert2/dist/sweetalert2.min.css') }}">
+    <link rel="stylesheet" href="<?php echo e(asset('assets/vendor/fullcalendar/dist/fullcalendar.min.css')); ?>">
+    <link rel="stylesheet" href="<?php echo e(asset('assets/vendor/sweetalert2/dist/sweetalert2.min.css')); ?>">
 
-    <link rel="stylesheet" href="{{ asset('assets/css/bootstrap-select.min.css') }}" type="text/css">
-    <link rel="stylesheet" href="{{ asset('assets/css/jquery-confirm.min.css') }}" type="text/css">
-    <link rel="stylesheet" href="{{ asset('assets/css/dashboard.css') }}" type="text/css">
-    <link rel="stylesheet" href="{{ asset('assets/css/custom.css') }}" type="text/css">
+    <link rel="stylesheet" href="<?php echo e(asset('assets/css/bootstrap-select.min.css')); ?>" type="text/css">
+    <link rel="stylesheet" href="<?php echo e(asset('assets/css/jquery-confirm.min.css')); ?>" type="text/css">
+    <link rel="stylesheet" href="<?php echo e(asset('assets/css/dashboard.css')); ?>" type="text/css">
+    <link rel="stylesheet" href="<?php echo e(asset('assets/css/custom.css')); ?>" type="text/css">
 
-    {{-- GOOGLE ANALYTICS --}}
-    <script async src="https://www.googletagmanager.com/gtag/js?id={{ env('GOOGLE_MEASUREMENT_ID') }}"></script>
+    
+    <script async src="https://www.googletagmanager.com/gtag/js?id=<?php echo e(env('GOOGLE_MEASUREMENT_ID')); ?>"></script>
     <script>
         window.dataLayer = window.dataLayer || [];
 
@@ -33,7 +33,7 @@
             dataLayer.push(arguments);
         }
         gtag('js', new Date());
-        gtag('config', '{{ env('GOOGLE_MEASUREMENT_ID') }}');
+        gtag('config', '<?php echo e(env('GOOGLE_MEASUREMENT_ID')); ?>');
     </script>
 
     <style>
@@ -117,32 +117,30 @@
         /*Social Media CSS End*/
     </style>
 
-    @stack('styles')
+    <?php echo $__env->yieldPushContent('styles'); ?>
 
 </head>
 
 <body>
 
 
-    @include('includes.navbar')
+    <?php echo $__env->make('includes.navbar', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
     <div class="main-content" id="panel">
-        @include('includes.header')
-        @include('includes.page-header')
+        <?php echo $__env->make('includes.header', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
+        <?php echo $__env->make('includes.page-header', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
         <div class="container-fluid mt--6">
-            @yield('content')
+            <?php echo $__env->yieldContent('content'); ?>
         </div>
-        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script src="<?php echo e(asset('assets/vendor/jquery/dist/jquery.min.js')); ?>"></script>
+        <script src="<?php echo e(asset('assets/vendor/bootstrap/dist/js/bootstrap.bundle.min.js')); ?>"></script>
+        <script src="<?php echo e(asset('assets/vendor/js-cookie/js.cookie.js')); ?>"></script>
+        <script src="<?php echo e(asset('assets/vendor/jquery.scrollbar/jquery.scrollbar.min.js')); ?>"></script>
+        <script src="<?php echo e(asset('assets/vendor/jquery-scroll-lock/dist/jquery-scrollLock.min.js')); ?>"></script>
 
-        <script src="{{ asset('assets/vendor/jquery/dist/jquery.min.js') }}"></script>
-        <script src="{{ asset('assets/vendor/bootstrap/dist/js/bootstrap.bundle.min.js') }}"></script>
-        <script src="{{ asset('assets/vendor/js-cookie/js.cookie.js') }}"></script>
-        <script src="{{ asset('assets/vendor/jquery.scrollbar/jquery.scrollbar.min.js') }}"></script>
-        <script src="{{ asset('assets/vendor/jquery-scroll-lock/dist/jquery-scrollLock.min.js') }}"></script>
-
-        <script src="{{ asset('assets/js/bootstrap-select.min.js') }}"></script>
-        <script src="{{ asset('assets/js/jquery-confirm.min.js') }}"></script>
-        <script src="{{ asset('assets/js/dashboard.js') }}"></script>
-        <script src="{{ asset('assets/js/chart/Chart.bundle.min.js') }}"></script>
+        <script src="<?php echo e(asset('assets/js/bootstrap-select.min.js')); ?>"></script>
+        <script src="<?php echo e(asset('assets/js/jquery-confirm.min.js')); ?>"></script>
+        <script src="<?php echo e(asset('assets/js/dashboard.js')); ?>"></script>
+        <script src="<?php echo e(asset('assets/js/chart/Chart.bundle.min.js')); ?>"></script>
 
         <script>
             function debounce(func, timeout = 300) {
@@ -173,9 +171,10 @@
                 changeEventRegister[`${dependentFieldId}_${optionalFieldId}`] = true;
             }
         </script>
-        @stack('scripts')
+        <?php echo $__env->yieldPushContent('scripts'); ?>
 
-        @stack('modal')
+        <?php echo $__env->yieldPushContent('modal'); ?>
 </body>
 
 </html>
+<?php /**PATH C:\xampp\htdocs\netreach_live\resources\views/layouts/app.blade.php ENDPATH**/ ?>

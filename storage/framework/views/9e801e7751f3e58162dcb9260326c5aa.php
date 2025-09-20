@@ -1,7 +1,5 @@
-@extends('layouts.app')
-
-@section('content')
-    @can('dashboard-view')
+<?php $__env->startSection('content'); ?>
+    <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('dashboard-view')): ?>
         <div class="row dashboard-ab">
 
             <div class="col-xl-4 col-md-4 col-sm-6 col-xs-12" onclick="return dashboard(1);">
@@ -9,12 +7,12 @@
                     <div class="card-body">
                         <div class="row">
                             <div class="col">
-                                <div class="indicate">{{ $book->count() }}</div>
+                                <div class="indicate"><?php echo e($book->count()); ?></div>
                                 <h5 class="card-title mb-0">Total No. of Clients Booked Appointment</h5>
                             </div>
                             <div class="col-auto">
                                 <div class="ab-icon-info ab-light-blue">
-                                    <img src="{{ asset('assets/img/icons/dashboard-icon/appointment-icon.png') }}">
+                                    <img src="<?php echo e(asset('assets/img/icons/dashboard-icon/appointment-icon.png')); ?>">
                                 </div>
                             </div>
                         </div><!-- row -->
@@ -27,12 +25,12 @@
                     <div class="card-body">
                         <div class="row">
                             <div class="col">
-                                <div class="indicate">{{ $newlyAddedCountVar->count() }}</div>
+                                <div class="indicate"><?php echo e($newlyAddedCountVar->count()); ?></div>
                                 <h5 class="card-title mb-0">Newly Added</h5>
                             </div>
                             <div class="col-auto">
                                 <div class="ab-icon-info ab-light-sky">
-                                    <img src="{{ asset('assets/img/icons/dashboard-icon/add-icon.png') }}">
+                                    <img src="<?php echo e(asset('assets/img/icons/dashboard-icon/add-icon.png')); ?>">
                                 </div>
                             </div>
                         </div><!-- row -->
@@ -45,12 +43,12 @@
                     <div class="card-body">
                         <div class="row">
                             <div class="col">
-                                <div class="indicate">{{ $client_take_test->count() }}</div>
+                                <div class="indicate"><?php echo e($client_take_test->count()); ?></div>
                                 <h5 class="card-title mb-0">Total No. of Clients Taken Test</h5>
                             </div>
                             <div class="col-auto">
                                 <div class="ab-icon-info ab-light-green">
-                                    <img src="{{ asset('assets/img/icons/dashboard-icon/total-icon.png') }}">
+                                    <img src="<?php echo e(asset('assets/img/icons/dashboard-icon/total-icon.png')); ?>">
                                 </div>
                             </div>
                         </div><!-- row -->
@@ -63,12 +61,12 @@
                     <div class="card-body">
                         <div class="row">
                             <div class="col">
-                                <div class="indicate ab-dark-blue-font">{{ $report_results->count() }}</div>
+                                <div class="indicate ab-dark-blue-font"><?php echo e($report_results->count()); ?></div>
                                 <h5 class="card-title mb-0">Total No. of Clients Identified +VE</h5>
                             </div>
                             <div class="col-auto">
                                 <div class="ab-icon-info ab-dark-blue">
-                                    <img src="{{ asset('assets/img/icons/dashboard-icon/identified-icon.png') }}">
+                                    <img src="<?php echo e(asset('assets/img/icons/dashboard-icon/identified-icon.png')); ?>">
                                 </div>
                             </div>
                         </div><!-- row -->
@@ -81,12 +79,12 @@
                     <div class="card-body">
                         <div class="row">
                             <div class="col">
-                                <div class="indicate ab-blue-font">{{ $today_book->count() }}</div>
+                                <div class="indicate ab-blue-font"><?php echo e($today_book->count()); ?></div>
                                 <h5 class="card-title mb-0">Today's Appointments</h5>
                             </div>
                             <div class="col-auto">
                                 <div class="ab-icon-info ab-blue">
-                                    <img src="{{ asset('assets/img/icons/dashboard-icon/appointment-icon.png') }}">
+                                    <img src="<?php echo e(asset('assets/img/icons/dashboard-icon/appointment-icon.png')); ?>">
                                 </div>
                             </div>
                         </div><!-- row -->
@@ -94,53 +92,21 @@
                 </div><!-- card-stats -->
             </div><!-- col-xl-4 -->
 
-            {{-- <div class="col-xl-4 col-md-4 col-sm-6 col-xs-12" onclick="return dashboard(6);">
-                <div class="card-stats ab-white">
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col">
-                                <div class="indicate ab-red-font">{{ $followupCountVar->count() }}</div>
-                                <h5 class="card-title mb-0">Follow-up/Old Clients</h5>
-                            </div>
-                            <div class="col-auto">
-                                <div class="ab-icon-info ab-red">
-                                    <img src="{{ asset('assets/img/icons/dashboard-icon/client-icon.png') }}">
-                                </div>
-                            </div>
-                        </div><!-- row -->
-                    </div><!-- card-body -->
-                </div><!-- card-stats -->
-            </div><!-- col-xl-4 --> --}}
+            
 
-            {{-- <div class="col-xl-4 col-md-4 col-sm-6 col-xs-12" onclick="return dashboard(7);">
-                <div class="card-stats ab-white">
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col">
-                                <div class="indicate ab-sky-font">{{ $evidence_shared->count() }}</div>
-                                <h5 class="card-title mb-0">Evidence Shared</h5>
-                            </div>
-                            <div class="col-auto">
-                                <div class="ab-icon-info ab-sky">
-                                    <img src="{{ asset('assets/img/icons/dashboard-icon/share-icon.png') }}">
-                                </div>
-                            </div>
-                        </div><!-- row -->
-                    </div><!-- card-body -->
-                </div><!-- card-stats -->
-            </div><!-- col-xl-4 --> --}}
+            
 
             <div class="col-xl-4 col-md-4 col-sm-6 col-xs-12" onclick="return dashboard_outreach(8);">
                 <div class="card-stats ab-white">
                     <div class="card-body">
                         <div class="row">
                             <div class="col">
-                                <div class="indicate ab-blue-font">{{ $man_cre_app->count() }}</div>
+                                <div class="indicate ab-blue-font"><?php echo e($man_cre_app->count()); ?></div>
                                 <h5 class="card-title mb-0">Manually Create Appoinments</h5>
                             </div>
                             <div class="col-auto">
                                 <div class="ab-icon-info ab-blue">
-                                    <img src="{{ asset('assets/img/icons/dashboard-icon/calander-icon.png') }}">
+                                    <img src="<?php echo e(asset('assets/img/icons/dashboard-icon/calander-icon.png')); ?>">
                                 </div>
                             </div>
                         </div><!-- row -->
@@ -154,13 +120,14 @@
                     <div class="card-body">
                         <div class="row">
                             <div class="col">
-                                <div class="indicate ab-dark-blue-font">{{ $total_no_of_clients_not_taken_test->count() }}
+                                <div class="indicate ab-dark-blue-font"><?php echo e($total_no_of_clients_not_taken_test->count()); ?>
+
                                 </div>
                                 <h5 class="card-title mb-0">Total No. of Clients not Taken Test</h5>
                             </div>
                             <div class="col-auto">
                                 <div class="ab-icon-info ab-dark-blue">
-                                    <img src="{{ asset('assets/img/icons/dashboard-icon/total-icon.png') }}">
+                                    <img src="<?php echo e(asset('assets/img/icons/dashboard-icon/total-icon.png')); ?>">
                                 </div>
                             </div>
                         </div><!-- row -->
@@ -171,16 +138,17 @@
             <div class="col-xl-4 col-md-4 col-sm-6 col-xs-12">
                 <div class="card-stats ab-white">
                     <div class="card-body">
-                        <a href="/analytics/{{ $totalPageViews }}">
+                        <a href="/analytics/<?php echo e($totalPageViews); ?>">
                             <div class="row">
                                 <div class="col">
-                                    <div class="indicate ab-dark-blue-font">{{ number_format($totalPageViews) }}
+                                    <div class="indicate ab-dark-blue-font"><?php echo e(number_format($totalPageViews)); ?>
+
                                     </div>
                                     <h5 class="card-title mb-0">Total Page Views</h5>
                                 </div>
                                 <div class="col-auto">
                                     <div class="ab-icon-info ab-dark-blue">
-                                        <img height="50" src="{{ asset('assets/img/icons/dashboard-icon/eye.png') }}">
+                                        <img height="50" src="<?php echo e(asset('assets/img/icons/dashboard-icon/eye.png')); ?>">
                                     </div>
                                 </div>
                             </div><!-- row -->
@@ -203,10 +171,10 @@
         </div><!-- row -->
 
 
-    @endcan
-@endsection
+    <?php endif; ?>
+<?php $__env->stopSection(); ?>
 
-@push('modal')
+<?php $__env->startPush('modal'); ?>
     <div class="modal fade" id="tbl_show" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
         style="display: none;" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
@@ -220,14 +188,13 @@
                 <div class="modal-body" id="tbl_dashboard_report">
 
                     <div class="table-responsive">
-                        {{-- <div class="exp-btn"> --}}
-                        {{-- <button type="button" class="btn btn-warning" onclick="Export();">Download
-                                Excel</button> --}}
-                        <a id="btn-export" href="{{ route('dashboard.report', ['export' => true]) }}"
-                            data-target="{{ route('dashboard.report', ['export' => true]) }}"
+                        
+                        
+                        <a id="btn-export" href="<?php echo e(route('dashboard.report', ['export' => true])); ?>"
+                            data-target="<?php echo e(route('dashboard.report', ['export' => true])); ?>"
                             class="btn btn-primary float-right w-2 m-2" role="button"
                             id="btn-export-risk-assessment">Export</a>
-                        {{-- </div> --}}
+                        
 
                         <div>
 
@@ -390,16 +357,16 @@
             </div>
         </div>
     </div>
-@endpush
+<?php $__env->stopPush(); ?>
 
-@push('scripts')
-    <link rel="stylesheet" media="all" href="{{ asset('assets/css/jquery.dataTables.css') }}">
-    <script type="text/javascript" charset="utf8" src="{{ asset('assets/js/jquery.dataTables.min.js') }}"></script>
+<?php $__env->startPush('scripts'); ?>
+    <link rel="stylesheet" media="all" href="<?php echo e(asset('assets/css/jquery.dataTables.css')); ?>">
+    <script type="text/javascript" charset="utf8" src="<?php echo e(asset('assets/js/jquery.dataTables.min.js')); ?>"></script>
     <script
-        src="{{ App::isProduction() ? secure_asset('assets/js/custom/self-risk-assessment.js') : asset('assets/js/custom/self-risk-assessment.js') }}">
+        src="<?php echo e(App::isProduction() ? secure_asset('assets/js/custom/self-risk-assessment.js') : asset('assets/js/custom/self-risk-assessment.js')); ?>">
     </script>
     <script
-        src="{{ App::isProduction() ? secure_asset('assets/vendor/datatables.net-buttons/js/dataTables.buttons.min.js') : asset('assets/vendor/datatables.net-buttons/js/dataTables.buttons.min.js') }}">
+        src="<?php echo e(App::isProduction() ? secure_asset('assets/vendor/datatables.net-buttons/js/dataTables.buttons.min.js') : asset('assets/vendor/datatables.net-buttons/js/dataTables.buttons.min.js')); ?>">
     </script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
@@ -493,11 +460,11 @@
             });*/
 
             var DataJson = {
-                "_token": "{{ csrf_token() }}",
+                "_token": "<?php echo e(csrf_token()); ?>",
                 "book": "booking"
             }
             $.ajax({
-                url: "{{ route('dashboard.report.chart') }}",
+                url: "<?php echo e(route('dashboard.report.chart')); ?>",
                 method: "POST",
                 data: DataJson,
                 dataType: "JSON",
@@ -583,7 +550,7 @@
                 scrollX: true,
                 buttons: ["excel"],
                 ajax: {
-                    url: "{{ route('dashboard.report') }}",
+                    url: "<?php echo e(route('dashboard.report')); ?>",
                     type: "GET",
                     data: {
                         report_pos,
@@ -691,7 +658,7 @@
                 scrollX: true,
                 buttons: ["excel"],
                 ajax: {
-                    url: "{{ route('dashboard.report') }}",
+                    url: "<?php echo e(route('dashboard.report')); ?>",
                     type: "GET",
                     data: {
                         report_pos,
@@ -734,7 +701,7 @@
                 scrollX: true,
                 buttons: ["excel"],
                 ajax: {
-                    url: "{{ route('dashboard.report') }}",
+                    url: "<?php echo e(route('dashboard.report')); ?>",
                     type: "GET",
                     data: {
                         report_pos,
@@ -806,7 +773,7 @@
 
         // function dashboard(report_pos) {
         //     $.ajax({
-        //         url: "{{ route('dashboard.report') }}",
+        //         url: "<?php echo e(route('dashboard.report')); ?>",
         //         type: "GET",
         //         data: {
         //             report_pos,
@@ -841,7 +808,7 @@
         //                 scrollX: true,
         //                 buttons: ["excel"],
         //                 ajax: {
-        //                     url: "{{ route('dashboard.report') }}",
+        //                     url: "<?php echo e(route('dashboard.report')); ?>",
         //                     type: "GET",
         //                     data: {
         //                         report_pos,
@@ -950,7 +917,7 @@
         //         scrollX: true,
         //         buttons: ["excel"],
         //         ajax: {
-        //             url: "{{ route('dashboard.report') }}",
+        //             url: "<?php echo e(route('dashboard.report')); ?>",
         //             type: "GET",
         //             data: {
         //                 report_pos,
@@ -1035,4 +1002,6 @@
         //     });
         // }
     </script>
-@endpush
+<?php $__env->stopPush(); ?>
+
+<?php echo $__env->make('layouts.app', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH C:\xampp\htdocs\netreach_live\resources\views/home.blade.php ENDPATH**/ ?>

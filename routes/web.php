@@ -14,6 +14,9 @@ use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Session;
 
+use App\Http\Controllers\DoctorController;
+use App\Http\Controllers\AnnouncementController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -336,6 +339,31 @@ Route::group(['middleware' => ['auth', 'log']], function () {
 	Route::post('/add-center', 'DistrictController@add_center')->name('center.add_center');
 	Route::post('get_district_by_state', 'DistrictController@get_district_by_state')->name('district.state');
 
+	// aanouncement
+
+		Route::get('/announcements', [AnnouncementController::class, 'index'])->name('announcements.index');
+		Route::get('/announcements/create', [AnnouncementController::class, 'create'])->name('announcements.create');
+		Route::post('/announcements', [AnnouncementController::class, 'store'])->name('announcements.store');
+		Route::get('/announcements/{id}', [AnnouncementController::class, 'show'])->name('announcements.show');
+		Route::get('/announcements/{id}/edit', [AnnouncementController::class, 'edit'])->name('announcements.edit');
+		Route::put('/announcements/{id}', [AnnouncementController::class, 'update'])->name('announcements.update');
+		Route::delete('/announcements/{id}', [AnnouncementController::class, 'destroy'])->name('announcements.destroy');
+
+	// aanouncement
+
+	Route::get('/doctors', [DoctorController::class, 'index'])->name('doctors.index'); 
+	Route::get('/doctors/create', [DoctorController::class, 'create'])->name('doctors.create');
+	Route::post('/doctors', [DoctorController::class, 'store'])->name('doctors.store');
+	Route::get('/doctors/{id}', [DoctorController::class, 'show'])->name('doctors.show');
+	Route::get('/doctors/{doctor}/edit', [DoctorController::class, 'edit'])->name('doctors.edit');
+	Route::put('/doctors/{doctor}', [DoctorController::class, 'update'])->name('doctors.update');
+	Route::delete('/doctors/{doctor}', [DoctorController::class, 'destroy'])->name('doctors.destroy');
+
+
+
+	
+
+
 	Route::post('/settings', 'SettingController@update')->name('settings.update');
 
 	Route::get('/user/vms', 'UserController@display_vms')->name('user.vms');
@@ -355,7 +383,7 @@ Route::group(['middleware' => ['auth', 'log']], function () {
 	Route::get('/user/vns/{id}/pass', 'UserController@viwe_display_vms_password')->name('vn.pass');
 	Route::post('/user/vns/updpass', 'UserController@viwe_display_vms_password2')->name('vn.updpass');
 
-	Route::post('edit_store_vns', 'UserController@edit_store_vns')->name('edit.store_vns');
+	Route::post('edit_store_vns', 'UserController@edit_store_vns')->name('edit.store_vns'); 
 	Route::post('/counseling', 'UserController@flag_counseling_update')->name('flag.counseling');
 	Route::post('/po-admin-report', 'UserController@po_admin_wise_report')->name('po.report');
 

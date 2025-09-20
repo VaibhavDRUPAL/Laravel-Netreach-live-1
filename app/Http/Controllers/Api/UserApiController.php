@@ -15,6 +15,10 @@ use App\Models\BookAppinmentMaster;
 use App\Models\StateMaster;
 use App\Models\DistrictMaster;
 use App\Models\Availability;
+use App\Models\Announcement;
+use App\Models\Doctor;
+use App\Models\VmMaster;
+use App\Models\ServiceType;
 use App\Models\SelfModule\RiskAssessmentQuestionnaire;
 use App\Models\BookTeleconsultation;
 //    use Illuminate\Support\Facades\Validator;
@@ -188,7 +192,15 @@ class UserApiController extends Controller
     }
 
     public function book_appointment(Request $request){
-        $user_id =183;
+
+         $user = $request->user(); // or auth()->user()
+        $user_id = $user->id;
+        if (!$user) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Unauthenticated'
+            ], 401);
+        }
         $request->validate([
             'service' => 'required',
             'state' => 'required',
@@ -456,8 +468,8 @@ class UserApiController extends Controller
             ], 422);
         }
 
-        $userId = $request->user(); 
-        $userId = 183; 
+        $userId = $request->user()->id;
+     
        // // dd($userId);
         $created = [];
 
@@ -740,6 +752,7 @@ class UserApiController extends Controller
             }
 
             return response()->json([
+                 'status' => 'success',
                 'message' => 'Availability slots fetched successfully',
                 'data'    => $data
             ], 200);
@@ -753,7 +766,47 @@ class UserApiController extends Controller
     }
 
 
+    public function get_vns_list(Request $request){
 
+        $vn_data = VmMaster::get();
+         return response()->json([
+             'status' => 'success',
+                'message' => 'All vns details',
+                'data'    => $vn_data
+            ], 200);
+
+    }
+
+    public function get_announcement(){
+            $announcements = Announcement::orderBy('created_at', 'desc')->get();
+          return response()->json([
+                'status' => 'success',
+                'message' => 'All announcement',
+                'data'    => $announcements
+            ], 200);
+    }
+
+    public function get_service_type(Request $request){
+
+        $service_type = ServiceType::get();
+         return response()->json([
+             'status' => 'success',
+                'message' => 'All vns details',
+                'data'    => $service_type
+            ], 200);
+
+    }
+
+    public function get_doctor(Request $request){
+
+        $list = Doctor::get();
+         return response()->json([
+             'status' => 'success',
+                'message' => 'All vns details',
+                'data'    => $list
+            ], 200);
+
+    }
 
     
 }

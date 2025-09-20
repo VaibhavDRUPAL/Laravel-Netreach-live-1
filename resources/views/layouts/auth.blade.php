@@ -23,6 +23,7 @@
     <div class="main-content">
         @yield('content')
     </div>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 <script src="{{asset('assets/vendor/jquery/dist/jquery.min.js')}}"></script>
 <script src="{{asset('assets/vendor/bootstrap/dist/js/bootstrap.bundle.min.js')}}"></script>
