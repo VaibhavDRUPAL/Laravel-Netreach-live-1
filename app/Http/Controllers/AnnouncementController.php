@@ -4,17 +4,28 @@ namespace App\Http\Controllers;
 
 use App\Models\Announcement;
 use Illuminate\Http\Request;
+use Carbon\Carbon;
 
 class AnnouncementController extends Controller
 {
     // ✅ List all announcements
-    public function index()
+    public function index(Request $request)
     {
-        $announcements = Announcement::orderBy('created_at', 'desc')->get();
+        $query = Announcement::query();
+
+        // optional search
+        if ($request->has('search')) {
+            $query->where('title', 'like', '%'.$request->search.'%')
+                  ->orWhere('content', 'like', '%'.$request->search.'%');
+        }
+
+        $announcements = $query->orderBy('created_at', 'desc')->get();
+
         return view('announcement.index', compact('announcements'));
     }
 
-     public function create()
+    // ✅ Show create form
+    public function create()
     {
         return view('announcement.create');
     }
@@ -25,29 +36,42 @@ class AnnouncementController extends Controller
         $validated = $request->validate([
             'title'      => 'required|string|max:255',
             'content'    => 'nullable|string',
-            'start_date' => 'nullable|date',
-            'end_date'   => 'nullable|date|after_or_equal:start_date',
+            'start_date' => 'nullable|date_format:Y-m-d\TH:i',
+            'end_date'   => 'nullable|date_format:Y-m-d\TH:i|after_or_equal:start_date',
             'is_active'  => 'boolean'
         ]);
 
-        $announcements = Announcement::create($validated);
-        // dd($announcements);
-          return view('announcement.index', compact('announcements'));
+        // convert to proper MySQL datetime
+        $validated['start_date'] = $validated['start_date']
+            ? Carbon::parse($validated['start_date'])->format('Y-m-d H:i:s')
+            : null;
 
+        $validated['end_date'] = $validated['end_date']
+            ? Carbon::parse($validated['end_date'])->format('Y-m-d H:i:s')
+            : null;
+
+        Announcement::create($validated);
+
+        // always redirect to index (not return view)
+        return redirect()->route('announcements.index')
+                         ->with('success', 'Announcement created successfully.');
     }
-        public function show($id)
-        {
-            $announcement = Announcement::findOrFail($id);
-            return view('announcement.view', compact('announcement'));
-        }
 
-      public function edit($id)
-        {
-            $announcement = Announcement::findOrFail($id);
-           return view('announcement.edit', compact('announcement'));
+    // ✅ Show single announcement
+    public function show($id)
+    {
+        $announcement = Announcement::findOrFail($id);
+        return view('announcement.view', compact('announcement'));
+    }
 
-        }
+    // ✅ Show edit form
+    public function edit($id)
+    {
+        $announcement = Announcement::findOrFail($id);
+        return view('announcement.edit', compact('announcement'));
+    }
 
+    // ✅ Update announcement
     public function update(Request $request, $id)
     {
         $announcement = Announcement::findOrFail($id);
@@ -55,14 +79,23 @@ class AnnouncementController extends Controller
         $validated = $request->validate([
             'title'      => 'sometimes|required|string|max:255',
             'content'    => 'nullable|string',
-            'start_date' => 'nullable|date',
-            'end_date'   => 'nullable|date|after_or_equal:start_date',
+            'start_date' => 'nullable|date_format:Y-m-d\TH:i',
+            'end_date'   => 'nullable|date_format:Y-m-d\TH:i|after_or_equal:start_date',
             'is_active'  => 'boolean'
         ]);
 
+        $validated['start_date'] = $validated['start_date']
+            ? Carbon::parse($validated['start_date'])->format('Y-m-d H:i:s')
+            : null;
+
+        $validated['end_date'] = $validated['end_date']
+            ? Carbon::parse($validated['end_date'])->format('Y-m-d H:i:s')
+            : null;
+
         $announcement->update($validated);
 
-            return view('announcement.view', compact('announcement'));
+        return redirect()->route('announcements.show', $announcement)
+                         ->with('success', 'Announcement updated successfully.');
     }
 
     // ✅ Delete announcement
@@ -70,8 +103,8 @@ class AnnouncementController extends Controller
     {
         $announcement = Announcement::findOrFail($id);
         $announcement->delete();
-        $announcements = Announcement::orderBy('created_at', 'desc')->get();
-            return view('announcement.index', compact('announcements'));
-      
+
+        return redirect()->route('announcements.index')
+                         ->with('success', 'Announcement deleted successfully.');
     }
 }

@@ -94,12 +94,12 @@
 
                      <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->any(['view-announcement', 'create-announcement'])): ?>
                         <li class="nav-item">
-                            <a class="nav-link <?php echo e(request()->is('users*') ? 'active' : ''); ?>" href="#navbar-users"
-                                data-toggle="collapse" role="button" aria-expanded="true" aria-controls="navbar-users">
+                            <a class="nav-link <?php echo e(request()->is('announcement*') ? 'active' : ''); ?>" href="#navbar-announcement"
+                                data-toggle="collapse" role="button" aria-expanded="true" aria-controls="navbar-announcement">
                                 <i class="fas text-primary fa-tasks"></i>
                                 <span class="nav-link-text">Manage Announcement</span>
                             </a>
-                            <div class="collapse" id="navbar-users">
+                            <div class="collapse" id="navbar-announcement">
                                 <ul class="nav nav-sm flex-column">
                                     <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('view-announcement')): ?>
                                         <li class="nav-item">
@@ -113,6 +113,34 @@
                                             <a href="<?php echo e(route('announcements.create')); ?>" class="nav-link"><span
                                                     class="sidenav-mini-icon">D </span><span class="sidenav-normal">Add New
                                                     Announcement</span></a>
+                                        </li>
+                                    <?php endif; ?>
+                                </ul>
+                            </div>
+                        </li>
+                    <?php endif; ?>
+
+                     <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->any(['view-doctor', 'create-doctor'])): ?>
+                        <li class="nav-item">
+                            <a class="nav-link <?php echo e(request()->is('doctor*') ? 'active' : ''); ?>" href="#navbar-doctor"
+                                data-toggle="collapse" role="button" aria-expanded="true" aria-controls="navbar-doctor">
+                                <i class="fas text-primary fa-tasks"></i>
+                                <span class="nav-link-text">Manage doctor</span>
+                            </a>
+                            <div class="collapse" id="navbar-doctor">
+                                <ul class="nav nav-sm flex-column">
+                                    <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('view-doctor')): ?>
+                                        <li class="nav-item">
+                                            <a href="<?php echo e(route('doctors.index')); ?>" class="nav-link"><span
+                                                    class="sidenav-mini-icon">D </span><span class="sidenav-normal">All
+                                                    doctor</span></a>
+                                        </li>
+                                    <?php endif; ?>
+                                    <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('create-doctor')): ?>
+                                        <li class="nav-item">
+                                            <a href="<?php echo e(route('doctors.create')); ?>" class="nav-link"><span
+                                                    class="sidenav-mini-icon">D </span><span class="sidenav-normal">Add New
+                                                    doctor</span></a>
                                         </li>
                                     <?php endif; ?>
                                 </ul>

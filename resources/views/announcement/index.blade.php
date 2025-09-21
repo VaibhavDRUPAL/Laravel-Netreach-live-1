@@ -43,7 +43,7 @@
                              
                                     <tr>
                                         <td scope="row">
-                                            {{ $announcement['title'] }}
+                                            {{ $announcement->title }}
                                         </td>
                                         <td class="budget">
                                             {{ Str::limit($announcement->content, 50) }}

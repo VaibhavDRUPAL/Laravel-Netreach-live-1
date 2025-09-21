@@ -16,4 +16,11 @@ class Announcement extends Model
         'end_date',
         'is_active',
     ];
+
+    // Automatically cast dates
+    protected $casts = [
+        'start_date' => 'datetime',
+        'end_date'   => 'datetime',
+        'is_active'  => 'boolean',
+    ];
 }

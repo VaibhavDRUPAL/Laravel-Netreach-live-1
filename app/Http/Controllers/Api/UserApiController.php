@@ -54,7 +54,7 @@ class UserApiController extends Controller
                 'message' => 'Unauthenticated'
             ], 401);
         }
-
+        
         return response()->json([
             'status' => true,
             'message' => 'User details fetched successfully',

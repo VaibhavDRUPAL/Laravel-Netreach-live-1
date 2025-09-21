@@ -9,37 +9,46 @@
     <div class="col-md-12">
         <div class="card mb-5">
             <div class="card-body">
-                {!! Form::model($announcement, ['route' => ['announcements.update', $announcement->id], 'method' => 'PUT', 'files' => true]) !!}
-                <h6 class="heading-small text-muted mb-4">Edit Announcement</h6>
+                {!! Form::open(['route' => 'announcements.store', 'method' => 'POST', 'files' => true]) !!}
+                <h6 class="heading-small text-muted mb-4">Create Announcement</h6>
                 <div class="pl-lg-4">
                     <div class="row">
+                        {{-- Title --}}
                         <div class="col-lg-6">
                             <div class="form-group">
                                 {{ Form::label('title', 'Title', ['class' => 'form-control-label']) }}
                                 {{ Form::text('title', null, ['class' => 'form-control', 'required']) }}
                             </div>
                         </div>
+
+                        {{-- Content --}}
                         <div class="col-lg-12">
                             <div class="form-group">
                                 {{ Form::label('content', 'Content', ['class' => 'form-control-label']) }}
                                 {{ Form::textarea('content', null, ['class' => 'form-control', 'rows'=>3, 'required']) }}
                             </div>
                         </div>
+
+                        {{-- Start Date & Time --}}
                         <div class="col-lg-6">
                             <div class="form-group">
-                                {{ Form::label('start_date', 'Start Date', ['class' => 'form-control-label']) }}
-                                {{ Form::date('start_date', $announcement->start_date, ['class' => 'form-control', 'required']) }}
+                                {{ Form::label('start_date', 'Start Date & Time', ['class' => 'form-control-label']) }}
+                                {{ Form::datetimeLocal('start_date', null, ['class' => 'form-control', 'required']) }}
                             </div>
                         </div>
+
+                        {{-- End Date & Time --}}
                         <div class="col-lg-6">
                             <div class="form-group">
-                                {{ Form::label('end_date', 'End Date', ['class' => 'form-control-label']) }}
-                                {{ Form::date('end_date', $announcement->end_date, ['class' => 'form-control', 'required']) }}
+                                {{ Form::label('end_date', 'End Date & Time', ['class' => 'form-control-label']) }}
+                                {{ Form::datetimeLocal('end_date', null, ['class' => 'form-control', 'required']) }}
                             </div>
                         </div>
+
+                        {{-- Active Checkbox --}}
                         <div class="col-lg-6">
                             <div class="custom-control custom-checkbox mt-4">
-                                {{ Form::checkbox('is_active', 1, $announcement->is_active, ['class' => 'custom-control-input', 'id' => 'is_active']) }}
+                                {{ Form::checkbox('is_active', 1, false, ['class' => 'custom-control-input', 'id' => 'is_active']) }}
                                 {{ Form::label('is_active', 'Active', ['class' => 'custom-control-label']) }}
                             </div>
                         </div>
@@ -51,7 +60,7 @@
                 <div class="pl-lg-4">
                     <div class="row">
                         <div class="col-md-12">
-                            {{ Form::submit('Update', ['class'=> 'mt-3 btn btn-primary']) }}
+                            {{ Form::submit('Create', ['class'=> 'mt-3 btn btn-primary']) }}
                         </div>
                     </div>
                 </div>

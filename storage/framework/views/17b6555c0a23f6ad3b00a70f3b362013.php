@@ -44,7 +44,7 @@
                              
                                     <tr>
                                         <td scope="row">
-                                            <?php echo e($announcement['title']); ?>
+                                            <?php echo e($announcement->title); ?>
 
                                         </td>
                                         <td class="budget">
