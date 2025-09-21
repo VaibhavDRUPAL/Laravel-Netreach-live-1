@@ -192,17 +192,19 @@ class UserApiController extends Controller
     }
 
     
-    public function book_appointment(Request $request)
+    public function book_appointments(Request $request)
     {
         // Hardcoded user (for now)
      
+        // dd('dsfdsa');
 
-          $user = $request->user(); // or auth()->user()
+        // //   $user = $request->user(); // or auth()->user()
+            $user_id = 186;
 
         
         // Validation
         $validated = $request->validate([
-            'service'          => 'required|string',
+            'service'          => 'required|integer',
             'state'            => 'required|integer',
             'district'         => 'required|integer',
             'testing_center'   => 'required|integer',
@@ -214,7 +216,7 @@ class UserApiController extends Controller
         $appointment = BookAppinmentMaster::create([
             'user_id'      => $user_id,
             'state_id'     => $validated['state'],
-            'survey_id'    => $validated['service'],
+            'service_type_id' => $validated['service'],
             'district_id'  => $validated['district'],
             'center_ids'   => $validated['testing_center'],
             'appoint_date' => \Carbon\Carbon::createFromFormat('d-m-Y', $validated['appointment_date'])->format('Y-m-d'),
