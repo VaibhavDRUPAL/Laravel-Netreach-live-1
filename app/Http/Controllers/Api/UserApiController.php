@@ -567,7 +567,7 @@ class UserApiController extends Controller
             ]);
             
             $userId = 1;
-            // // dd($userId);
+            dd($userId);
 
             // ✅ Step 1: Check availability
             $available = Availability::where('user_id', $userId)
