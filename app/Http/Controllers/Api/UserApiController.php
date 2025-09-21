@@ -192,52 +192,66 @@ class UserApiController extends Controller
     }
 
     
-    public function book_appointments(Request $request)
-    {
-        // Hardcoded user (for now)
-     
-        // dd('dsfdsa');
+   public function book_appointments(Request $request)
+        {
+            // ✅ Check authenticated user
+            $user = $request->user(); // or auth()->user()
+            if (!$user) {
+                return response()->json([
+                    'status'  => false,
+                    'message' => 'Unauthenticated'
+                ], 401);
+            }
+            $user_id = $user->id;
+            // $user_id = 186;
 
-        // //   $user = $request->user(); // or auth()->user()
-            $user_id = 186;
+            // ✅ Validation rules
+            $validator = \Validator::make($request->all(), [
+                'service'          => 'required|integer', // assuming services table
+                'state'            => 'required|integer',  // assuming states table
+                'district'         => 'required|integer', // assuming districts table
+                'testing_center'   => 'required|integer',  // assuming centers table
+                'appointment_date' => 'required|date_format:d-m-Y|after_or_equal:today',
+            ]);
 
-        
-        // Validation
-        $validated = $request->validate([
-            'service'          => 'required|integer',
-            'state'            => 'required|integer',
-            'district'         => 'required|integer',
-            'testing_center'   => 'required|integer',
-            'appointment_date' => 'required|date_format:d-m-Y',
-        ]);
-        
-        $state_id = $validated['state'];
-        // Save record
-        $appointment = BookAppinmentMaster::create([
-            'user_id'      => $user_id,
-            'state_id'     => $validated['state'],
-            'service_type_id' => $validated['service'],
-            'district_id'  => $validated['district'],
-            'center_ids'   => $validated['testing_center'],
-            'appoint_date' => \Carbon\Carbon::createFromFormat('d-m-Y', $validated['appointment_date'])->format('Y-m-d'),
-        ]);
-          
-        // Fetch VN details
-        $vndata = VmMaster::where('state_code', $state_id)->first();
+            // ✅ Return JSON errors if validation fails
+            if ($validator->fails()) {
+                return response()->json([
+                    'status' => false,
+                    'errors' => $validator->errors()
+                ], 422);
+            }
 
-        // Generate unique id
-        $uniqueId = $this->generateUniqueId($appointment->id);
-        $appointment->survey_unique_ids = $uniqueId;
-        $appointment->save();
+            $validated = $validator->validated();
 
-        return response()->json([
-            'status'     => true,
-            'message'    => 'Appointment booked successfully.',
-            'booking_id' => $appointment->id,
-            'unique_id'  => $uniqueId,
-            'vn_details' => $vndata, // 👈 extra data
-        ]);
-    }
+            // ✅ Save appointment record
+            $appointment = BookAppinmentMaster::create([
+                'user_id'         => $user_id,
+                'state_id'        => $validated['state'],
+                'service_type_id' => $validated['service'],
+                'district_id'     => $validated['district'],
+                'center_ids'      => $validated['testing_center'],
+                'appoint_date'    => \Carbon\Carbon::createFromFormat('d-m-Y', $validated['appointment_date'])->format('Y-m-d'),
+            ]);
+
+            // ✅ Fetch VN details
+            $vndata = VmMaster::where('state_code', $validated['state'])->first();
+
+            // ✅ Generate unique survey ID
+            $uniqueId = $this->generateUniqueId($appointment->id);
+            $appointment->survey_unique_ids = $uniqueId;
+            $appointment->save();
+
+            // ✅ Return success response
+            return response()->json([
+                'status'     => true,
+                'message'    => 'Appointment booked successfully.',
+                'booking_id' => $appointment->id,
+                'unique_id'  => $uniqueId,
+                'vn_details' => $vndata,
+            ]);
+        }
+
 
 
 
@@ -721,20 +735,20 @@ class UserApiController extends Controller
    public function upload_report(Request $request)
     {
         // Assuming the user is logged in
-        // $user = $request->user(); // ✅ Login user
+        $user = $request->user(); // ✅ Login user
         // For testing you had 
-        // $user_id = $user->id;
-        $user_id = 186;
-        $booking_id = $request->booking_id;
-
         
-        // if (!$user) {
-        //     return response()->json([
-        //         'status' => false,
-        //         'message' => 'Unauthenticated'
-        //     ], 401);
-        // }
-
+        $booking_id = $request->booking_id;
+        
+        
+        if (!$user) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Unauthenticated'
+            ], 401);
+        }
+        
+        $user_id = $user->id;
         // ✅ Validation
        // Validate manually for JSON response
         $validator = \Validator::make($request->all(), [
