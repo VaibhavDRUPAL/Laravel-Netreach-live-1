@@ -195,10 +195,11 @@ class UserApiController extends Controller
     public function book_appointment(Request $request)
     {
         // Hardcoded user (for now)
-        $user_id = 186;
+     
 
-        $state_id = $validated['state'];
-          
+          $user = $request->user(); // or auth()->user()
+
+        
         // Validation
         $validated = $request->validate([
             'service'          => 'required|string',
@@ -207,7 +208,8 @@ class UserApiController extends Controller
             'testing_center'   => 'required|integer',
             'appointment_date' => 'required|date_format:d-m-Y',
         ]);
-
+        
+        $state_id = $validated['state'];
         // Save record
         $appointment = BookAppinmentMaster::create([
             'user_id'      => $user_id,
@@ -714,37 +716,68 @@ class UserApiController extends Controller
         ]);
     }
 
-    public function upload_report(Request $request)
+   public function upload_report(Request $request)
     {
-        $user = $request->user(); // ✅ Login user
-        // // dd($user);
-        if (!$user) {
-            return response()->json([
-                'status' => false,
-                'message' => 'Unauthenticated'
-            ], 401);
-        }
+        // Assuming the user is logged in
+        // $user = $request->user(); // ✅ Login user
+        // For testing you had 
+        // $user_id = $user->id;
+        $user_id = 186;
+        $booking_id = $request->booking_id;
+
+        
+        // if (!$user) {
+        //     return response()->json([
+        //         'status' => false,
+        //         'message' => 'Unauthenticated'
+        //     ], 401);
+        // }
 
         // ✅ Validation
-        $request->validate([
-            'report_file' => 'required|image|mimes:pdf|max:2048'
+       // Validate manually for JSON response
+        $validator = \Validator::make($request->all(), [
+            'report_file' => 'required|mimes:pdf|max:2048', // Only PDF
         ]);
-        // ✅ Save file in storage/app/public/profile_pics
-        $path = $request->file('report_file')->store('report_file', 'public');
-        // // dd($path);
-        
-        // ✅ Old image delete (agar pehle se save ho)
-        if ($user->report_file) {
-            Storage::disk('public')->delete($user->report_file);
+
+        if ($validator->fails()) {
+            // Return proper JSON response on validation error
+            return response()->json([
+                'status' => false,
+                'errors' => $validator->errors()
+            ], 422);
         }
 
-        // ✅ Update in DB
-        $user->report_file = $path;
-        $user->save();
+        // ✅ Save file in storage/app/public/report_file
+        $path = $request->file('report_file')->store('report_file', 'public');
+      
+
+        // ✅ Save record in book_appointment table
+        // $appointment = new \App\Models\BookAppinmentMaster(); 
+        // $appointment->user_id = $user_id;
+        // $appointment->report_file = $path;
+        // $appointment->save();
+
+        // Find the booking for this user
+            $appointment = \App\Models\BookAppinmentMaster::where('id', $booking_id)
+                            ->where('user_id', $user_id)
+                            ->first();
+
+            if (!$appointment) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Booking not found for this user.'
+                ], 404);
+            }
+
+            // Update the report file
+            $appointment->report_file = $path;
+            $appointment->save();
+
+
 
         return response()->json([
             'status'  => true,
-            'message' => 'Profile picture updated successfully',
+            'message' => 'Report uploaded successfully',
             'report_file_url' => asset('storage/' . $path)
         ]);
     }
