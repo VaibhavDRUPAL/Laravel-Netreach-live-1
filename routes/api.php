@@ -30,6 +30,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/user/get_profile_pic', [UserApiController::class, 'get_profile_pic']);
     Route::post('/add_time_slot', [UserApiController::class, 'add_time_slot']);
     Route::post('/user/book-appointment', [UserApiController::class, 'book_appointment']);
+    Route::post('/user/upload-report', [UserApiController::class, 'upload_report']);
 });
 Route::post('/get_time_slot', [UserApiController::class, 'get_time_slot']);
 // Route::get('/user/fetch', [UserApiController::class, 'getUserDetails']);
@@ -47,4 +48,5 @@ Route::get('/get_vns_list', [UserApiController::class, 'get_vns_list']);
 Route::get('/get_announcement', [UserApiController::class, 'get_announcement']);
 Route::get('/get_service_type', [UserApiController::class, 'get_service_type']);
 Route::get('/get_doctor', [UserApiController::class, 'get_doctor']);
+Route::get('/user/centers/{stateId}', [AppointmentController::class, 'getCentersByState']);
 // Route::get('/user/check', [UserApiController::class, 'check']);

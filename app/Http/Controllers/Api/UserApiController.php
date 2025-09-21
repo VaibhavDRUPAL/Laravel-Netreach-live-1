@@ -191,49 +191,62 @@ class UserApiController extends Controller
        
     }
 
-    public function book_appointment(Request $request){
+    
+    public function book_appointment(Request $request)
+    {
+        // Hardcoded user (for now)
+        $user_id = 186;
 
-         $user = $request->user(); // or auth()->user()
-        $user_id = $user->id;
-        if (!$user) {
-            return response()->json([
-                'status' => false,
-                'message' => 'Unauthenticated'
-            ], 401);
-        }
-        $request->validate([
-            'service' => 'required',
-            'state' => 'required',
-            'district' => 'required',
-            'testing_center' => 'required',
-            'appointment_date' => 'required|date',
+        $state_id = $validated['state'];
+          
+        // Validation
+        $validated = $request->validate([
+            'service'          => 'required|string',
+            'state'            => 'required|integer',
+            'district'         => 'required|integer',
+            'testing_center'   => 'required|integer',
+            'appointment_date' => 'required|date_format:d-m-Y',
         ]);
 
-        // Create the booking record
+        // Save record
         $appointment = BookAppinmentMaster::create([
-            'user_id' => $user_id,
-            'state_id' => $request->state,
-            'survey_id' => $request->service,
-            'district_id' => $request->district,
-            'center_ids' => $request->testing_center,
-            'appoint_date' => $request->appointment_date,
+            'user_id'      => $user_id,
+            'state_id'     => $validated['state'],
+            'survey_id'    => $validated['service'],
+            'district_id'  => $validated['district'],
+            'center_ids'   => $validated['testing_center'],
+            'appoint_date' => \Carbon\Carbon::createFromFormat('d-m-Y', $validated['appointment_date'])->format('Y-m-d'),
         ]);
+          
+        // Fetch VN details
+        $vndata = VmMaster::where('state_code', $state_id)->first();
 
-        // Generate the unique ID and update the booking record
+        // Generate unique id
         $uniqueId = $this->generateUniqueId($appointment->id);
         $appointment->survey_unique_ids = $uniqueId;
         $appointment->save();
 
         return response()->json([
-            'status' => true,
-            'message' => 'Appointment booked successfully.',
+            'status'     => true,
+            'message'    => 'Appointment booked successfully.',
             'booking_id' => $appointment->id,
-            'unique_id' => $uniqueId,
+            'unique_id'  => $uniqueId,
+            'vn_details' => $vndata, // 👈 extra data
         ]);
-
-          
-
     }
+
+
+
+        public function getCentersByState($stateId)
+            {
+                $centers = BookAppinmentMaster::where('state_id', $stateId)->get();
+
+                return response()->json([
+                    'status'  => true,
+                    'message' => 'Centers fetched successfully.',
+                    'data'    => $centers
+                ]);
+            }
 
      private function generateUniqueId($bookingId)
             {
@@ -701,6 +714,40 @@ class UserApiController extends Controller
         ]);
     }
 
+    public function upload_report(Request $request)
+    {
+        $user = $request->user(); // ✅ Login user
+        // // dd($user);
+        if (!$user) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Unauthenticated'
+            ], 401);
+        }
+
+        // ✅ Validation
+        $request->validate([
+            'report_file' => 'required|image|mimes:pdf|max:2048'
+        ]);
+        // ✅ Save file in storage/app/public/profile_pics
+        $path = $request->file('report_file')->store('report_file', 'public');
+        // // dd($path);
+        
+        // ✅ Old image delete (agar pehle se save ho)
+        if ($user->report_file) {
+            Storage::disk('public')->delete($user->report_file);
+        }
+
+        // ✅ Update in DB
+        $user->report_file = $path;
+        $user->save();
+
+        return response()->json([
+            'status'  => true,
+            'message' => 'Profile picture updated successfully',
+            'report_file_url' => asset('storage/' . $path)
+        ]);
+    }
 
     public function get_profile_pic(Request $request)
     {
