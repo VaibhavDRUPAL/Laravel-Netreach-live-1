@@ -31,14 +31,14 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/add_time_slot', [UserApiController::class, 'add_time_slot']);
     Route::post('/user/book-appointment', [UserApiController::class, 'book_appointments']);
     Route::post('/user/upload-report', [UserApiController::class, 'upload_report']);
+    Route::post('/user/book_teleconsultation', [UserApiController::class, 'book_teleconsultation']);
+    Route::get('/user/get_book_teleconsultation', [UserApiController::class, 'get_book_teleconsultation']);
 });
 Route::get('/get_time_slot', [UserApiController::class, 'get_time_slot']);
 // Route::get('/user/fetch', [UserApiController::class, 'getUserDetails']);
 
 Route::post('/user/questionnaire', [UserApiController::class, 'questionnaire']);
 
-Route::post('/user/book_teleconsultation', [UserApiController::class, 'book_teleconsultation']);
-Route::get('/user/get_book_teleconsultation', [UserApiController::class, 'get_book_teleconsultation']);
 Route::get('/get_state', [UserApiController::class, 'get_state']);
 Route::get('/get_district', [UserApiController::class, 'get_district']);
 Route::post('/testing_center', [UserApiController::class, 'testing_center']);

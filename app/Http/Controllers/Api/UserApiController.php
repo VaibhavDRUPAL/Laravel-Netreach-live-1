@@ -21,7 +21,7 @@ use App\Models\VmMaster;
 use App\Models\ServiceType;
 use App\Models\SelfModule\RiskAssessmentQuestionnaire;
 use App\Models\BookTeleconsultation;
-//    use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\ValidationException;;
 use Illuminate\Support\Facades\Storage;
 
 class UserApiController extends Controller
@@ -557,17 +557,34 @@ class UserApiController extends Controller
 
         public function book_teleconsultation(Request $request)
         {
-            $request->validate([
-               // 'user_id'   => 'required|exists:users,id',
+            $rules = [
                 'type'      => 'required|string|max:100',
                 'service'   => 'required|string|max:100',
                 'date'      => 'required|date|after_or_equal:today',
                 'time'      => 'required|date_format:H:i',
                 'language'  => 'required|string|max:50',
-            ]);
+            ];
+
+            $messages = [
+                'type.required' => 'The appointment type is required.',
+                'date.after_or_equal' => 'The appointment date must be today or a future date.',
+                'time.date_format' => 'The time must be in a valid format (HH:mm).',
+                'language.required' => 'Please select a language for the appointment.',
+            ];
+
+            $validator = Validator::make($request->all(), $rules, $messages);
+
+            if ($validator->fails()) {
+                // This will print the errors and stop execution
+                dd($validator->errors()); 
+                // Note: Do not use this in production! Use the `throw` statement instead.
+            }
             
-            $userId = 1;
-            dd($userId);
+            // This code will only run if validation passes
+            // $userId = 186; 
+            $userId = $request->user()->id;
+         //   dd($userId);
+
 
             // ✅ Step 1: Check availability
             $available = Availability::where('user_id', $userId)
@@ -611,8 +628,8 @@ class UserApiController extends Controller
         }
 
 
-       public function get_book_teleconsultation(){
-            $user_id = 1;
+       public function get_book_teleconsultation(Request $request){
+           $user_id = $request->user()->id;
 
             $booking =  BookTeleconsultation::where('user_id', $user_id)->get();
 
