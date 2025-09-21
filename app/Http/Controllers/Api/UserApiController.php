@@ -823,12 +823,12 @@ class UserApiController extends Controller
 
         // dd($request->user());
         try {
-            $userId = $request->user()->id;
+            // $userId = $request->user()->id;
             // $userId = 183;
 
             // ✅ Fetch slots for user, grouped by date
-            $availabilities = Availability::where('user_id', $userId)
-                ->orderBy('date')
+            // $availabilities = Availability::where('user_id', $userId)
+            $availabilities = Availability::orderBy('date')
                 ->orderBy('start_time')
                 ->get()
                 ->groupBy('date');

@@ -32,7 +32,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/user/book-appointment', [UserApiController::class, 'book_appointments']);
 });
 Route::post('/user/upload-report', [UserApiController::class, 'upload_report']);
-Route::post('/get_time_slot', [UserApiController::class, 'get_time_slot']);
+Route::get('/get_time_slot', [UserApiController::class, 'get_time_slot']);
 // Route::get('/user/fetch', [UserApiController::class, 'getUserDetails']);
 
 Route::post('/user/questionnaire', [UserApiController::class, 'questionnaire']);
